@@ -30,6 +30,7 @@ class Game:
     
     '''
     Increment to go the next round
+    
     '''
     def next_day(self):
         self.current_date += 1
@@ -41,9 +42,26 @@ class Game:
             
             #not election day
             pass
+    
+    
+    def execute(self):
+        while self.current_date < self.election_date:
+            print("Day: " + str(self.current_date))
+            self.next_day()
+
+        print("It is now election day")
+
+        #election day
+        # self.next_day()
+        print("---------------------")
+        #end of game
+        print("The election is over!\n")
+        pass
+
 
 g = Game(100)
 print(g.election_date)
+g.execute()
 
 
 
