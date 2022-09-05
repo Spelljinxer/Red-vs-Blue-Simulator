@@ -20,10 +20,10 @@ class Game:
     '''
     def __init__(self, days):
         self.election_date = days
-        #make a list of green agents
+
         
         green_team = []
-        for i in range(0, self.agent_total - (10)):
+        for i in range(0, (self.agent_total - 10)):
             green_team.append(green_agent.green_agent())
         
         grey_team = []
@@ -63,14 +63,14 @@ class Game:
 TODO - read in the csv data from /tests
 '''
 if __name__ == "__main__":
-    with open('tests/network-2.csv', newline='') as csvfile:
-        # reader = csv.reader(csvfile, delimiter=',')
-        # for row in reader:
-        #     print(row)
+    with open('tests/node-attributes', newline='') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
+        for row in reader:
+            print(row)
         pass
-    total_dates = int(input("How many days would you like to run the simulation for? "))
-    game = Game(total_dates)
-    game.execute()
+    # total_dates = int(input("How many days would you like to run the simulation for? "))
+    # game = Game(total_dates)
+    # game.execute()
 
 
 
