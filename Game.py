@@ -58,10 +58,15 @@ class Game:
         print("The election is over!\n")
         pass
 
+'''
+TODO - read in the csv data from /tests
+'''
+if __name__ == "__main__":
+    total_dates = int(input("How many days would you like to run the simulation for? "))
+    game = Game(total_dates)
+    game.execute()
 
-g = Game(100)
-print(g.election_date)
-g.execute()
+
 
 
 
