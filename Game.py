@@ -1,8 +1,10 @@
-#should this be a class or not?
+
 import red_agent
 import blue_agent
 import green_agent
 import grey_agent
+
+import csv
 
 class Game:
 
@@ -36,7 +38,6 @@ class Game:
         self.current_date += 1
         if self.current_date == self.election_date:
             #election day
-            print("It is Election Day!\n")
             pass
         else:
             
@@ -49,10 +50,10 @@ class Game:
             print("Day: " + str(self.current_date))
             self.next_day()
 
-        print("It is now election day")
+        if(self.current_date == self.election_date):
+            print("Election Day: " + str(self.current_date))
+            self.next_day()
 
-        #election day
-        # self.next_day()
         print("---------------------")
         #end of game
         print("The election is over!\n")
@@ -62,6 +63,11 @@ class Game:
 TODO - read in the csv data from /tests
 '''
 if __name__ == "__main__":
+    with open('tests/network-2.csv', newline='') as csvfile:
+        # reader = csv.reader(csvfile, delimiter=',')
+        # for row in reader:
+        #     print(row)
+        pass
     total_dates = int(input("How many days would you like to run the simulation for? "))
     game = Game(total_dates)
     game.execute()
