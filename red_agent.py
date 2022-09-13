@@ -1,7 +1,14 @@
 import random
 
 class red_agent:
-
+    messages = {
+        "A" :  0, 
+        "B" :  1, 
+        "C" :  2,
+        "D" :  3,
+        "E" :  4,
+        "F" :  5,
+    }
 
     def __init__(self):
         pass
@@ -19,6 +26,8 @@ class red_agent:
                 uncertainty = self.uncertainty(potency)
         
         pass
+
+
 
 
 
