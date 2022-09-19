@@ -1,5 +1,11 @@
-import random
+"""
+Red Agent
+@Authors | @StudentId
+    Reiden Rufin | 22986337
+    Nathan Eden  | 22960674      
+"""
 
+import random
 class red_agent:
     messages = {
         "A" :  0, 

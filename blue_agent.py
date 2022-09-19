@@ -1,4 +1,9 @@
-
+"""
+Blue Agent
+@Authors | @StudentId
+    Reiden Rufin | 22986337
+    Nathan Eden  | 22960674      
+"""
 class blue_agent:
     
     def __init__(self, energy_level):

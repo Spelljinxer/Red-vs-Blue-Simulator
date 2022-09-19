@@ -1,4 +1,9 @@
-
+"""
+Game Class to Execute the Game
+@Authors | @StudentId
+    Reiden Rufin | 22986337
+    Nathan Eden  | 22960674      
+"""
 import red_agent
 import blue_agent
 import green_agent
@@ -6,6 +11,7 @@ import grey_agent
 
 import csv
 import random
+
 class Game:
     
     
@@ -14,23 +20,29 @@ class Game:
     
     agent_total = 100 #total number of agents (modify later to match with tests)
     red_agent = red_agent.red_agent()
-    blue_agent = blue_agent.blue_agent()
+    blue_agent = blue_agent.blue_agent(100) #TODO change this energey level
     
     '''
     Constructor for the Game
     '''
-    def __init__(self, days):
+    def __init__(self, days, green_total, grey_total):
         self.election_date = days
         green_team = []
-        
-        ranva = random.randint(0,1)
-        for i in range(0, (self.agent_total - 10)):
-            green_team.append(green_agent.green_agent(ranva))
-        
         grey_team = []
-        for i in range(0, 10):
-            grey_team.append(grey_agent.grey_agent())
-    
+
+        for i in range(grey_total):
+            # replace the first parameter for grey_agent with their team later
+            grey_team.append(grey_agent.grey_agent("", i))
+
+        for i in range(green_total):
+            # TODO replace this later
+            # first param = id
+            # second param = vote status
+            # third param = uncertainty
+            # fourth param = opinion
+        
+            green_team.append(green_agent.green_agent(i, 0, 0.5, 'red'))
+
     '''
     Increment to go the next round
     '''
@@ -40,7 +52,6 @@ class Game:
             #election day
             pass
         else:
-            
             #not election day
             pass
     
@@ -79,7 +90,7 @@ if __name__ == "__main__":
     
         
     # print(dict)
-    Game = Game(10)
+    Game = Game(10, 100, 10)
 
     # total_dates = int(input("How many days would you like to run the simulation for? "))
     # game = Game(total_dates)
