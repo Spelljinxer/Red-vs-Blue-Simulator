@@ -26,7 +26,7 @@ class blue_agent:
         self.user_playing = user_playing
 
     def valid_move(self, output, choice, green_team, grey_team):
-        if(int(choice) > len(output)):
+        if(int(choice) > len(output) or int(choice) < 1):
             print("Invalid move. Moves have been randomised again.")
             self.blue_move(green_team, grey_team)
         else:
