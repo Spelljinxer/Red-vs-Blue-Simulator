@@ -37,15 +37,19 @@ class blue_agent:
         if self.user_playing == True:
             output = [] 
             for i in range(3):
-                output.append(self.messages[random.randint(0, 9)])
-            if(len(grey_team) != 0):
+                # TODO make this UNIQUE
+                message = random.choice(list(self.messages.values()))
+                if message not in output:
+                    output.append(message)
+            if(self.messages[10] not in output):
                 output.append(self.messages[10])  
                 choice = input("Choose a message to send (1-4): " + str(output) +"\n")
                 self.valid_move(output, choice, green_team, grey_team)
             else:
                 choice = input("Choose a message to send (1-3): " + str(output) +"\n")
                 self.valid_move(output, choice, green_team, grey_team)
-
+        
+        #Execute the rest of the code if human is not playing as blue agent
         for green_agent in green_team:
             if(green_agent.vote_status == True):
                 continue
