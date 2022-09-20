@@ -78,23 +78,19 @@ class Game:
 TODO - read in the csv data from /tests
 '''
 if __name__ == "__main__":
-    dict = {
+    # dict = {
 
-    }
-    with open('tests/node-attributes', newline='') as csvfile:
-        reader = csv.reader(csvfile, delimiter=',')
-        #add the data to the dict with id as key and team as value
-        for row in reader:
-            dict[row[0]] = row[1]
-            pass
+    # }
+    # with open('tests/node-attributes', newline='') as csvfile:
+    #     reader = csv.reader(csvfile, delimiter=',')
+    #     #add the data to the dict with id as key and team as value
+    #     for row in reader:
+    #         dict[row[0]] = row[1]
+    #         pass
     
-        
-    # print(dict)
     Game = Game(10, 100, 10)
 
-    # total_dates = int(input("How many days would you like to run the simulation for? "))
-    # game = Game(total_dates)
-    # game.execute()
+
 
 
 

@@ -48,13 +48,19 @@ class blue_agent:
             else:
                 choice = input("Choose a message to send (1-3): " + str(output) +"\n")
                 self.valid_move(output, choice, green_team, grey_team)
-        
+
         #Execute the rest of the code if human is not playing as blue agent
         for green_agent in green_team:
             if(green_agent.vote_status == True):
                 continue
         
             green_agent_uncertainty = green_agent.uncertainty
+
+            self.energy_level -= (0.05 * (1 + green_agent_uncertainty))
+
+
+
+        #passive buff
         self.energy_level += (0.01 * self.followers)
         
 

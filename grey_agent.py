@@ -7,7 +7,8 @@ Grey Agent
 
 class grey_agent:
     connections = []
-    def __init__(self, team, id):
+    def __init__(self, connections, team, id):
+        self.connections = connections
         #which team they are working for
         self.team = team
         #agents unique ID
