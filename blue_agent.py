@@ -4,6 +4,7 @@ Blue Agent
     Reiden Rufin | 22986337
     Nathan Eden  | 22960674      
 """
+import random
 class blue_agent:
     
     def __init__(self, energy_level):

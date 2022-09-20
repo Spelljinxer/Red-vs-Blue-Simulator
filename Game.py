@@ -41,7 +41,7 @@ class Game:
             # third param = uncertainty
             # fourth param = opinion
         
-            green_team.append(green_agent.green_agent(i, 0, 0.5, 'red'))
+            green_team.append(green_agent.green_agent([], i, False, 0.5, None))
 
     '''
     Increment to go the next round
