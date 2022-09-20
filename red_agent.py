@@ -19,10 +19,11 @@ class red_agent:
         8: "message 9",
         9: "message 10",
     }
-    followers = 0
-    potency = 0
+    followers = None
+    potency = None
     def __init__(self):
-        pass
+        self.followers = 0
+        self.potency = 0
     
     def red_move(self, green_team):
         for green_agent in green_team:
