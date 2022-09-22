@@ -1,5 +1,13 @@
 # CITS3001-Project
 
+# Requirements
+
+```properties
+username@machine:~$ pip install igraph
+username@machine:~$ 
+username@machine:~$ pip install matplotlib
+```
+
 > Report Drafting
 > [https://docs.google.com/document/d/1XoNAPVyNEpUasD-rrc3I7k6QzF49HbfPvaAK0cTerEA/edit?usp=sharing](https://docs.google.com/document/d/1XoNAPVyNEpUasD-rrc3I7k6QzF49HbfPvaAK0cTerEA/edit?usp=sharing)
 
