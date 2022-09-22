@@ -15,14 +15,24 @@ username@machine:~$ pip install matplotlib
 ```
 Red Team
 - 1 Agent that has 5 levels of potent messages
+    - Each level has 2 messages
+    - The messages' goal is to not make green agent vote
+    - Although, sending one could still affect uncertainty of green agent
+- Has Follower Loss
 
 Blue Team
-- 1 Agent 
+- 1 Agent with 10 levels of correct messaging
+- Certainty Levels
 - Energy Levels
 - Can let a grey agent in (although they dont know their allegiance)
 
 Green Team
 - Majority of Agents (probably 80-90)
+- If they are willing to vote (means they are voting for blue)
+- If they are not willing to vote (means they are not voting for blue)
+- Has an uncertainty level
+    - Higher Uncertainty (+) means they are uncertain of whether to vote
+    - Lower Uncertainty (-) means they are certain of whether to vote
 
 Grey Team
 - Secret Allegiance to red team (unknown)
