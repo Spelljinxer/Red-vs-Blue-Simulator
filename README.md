@@ -2,7 +2,7 @@
 
 # Requirements
 
-```properties
+```shell
 username@machine:~$ pip install igraph
 username@machine:~$ 
 username@machine:~$ pip install matplotlib
