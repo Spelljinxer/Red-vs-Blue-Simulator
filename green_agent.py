@@ -8,12 +8,11 @@ import random
 class green_agent:
     connections = []
     communicate = None
-    def __init__(self, connections, unique_id, vote_status, uncertainty, opinion):
+    def __init__(self, connections, unique_id, vote_status, uncertainty):
         self.connections = connections
         self.unique_id = unique_id
         self.vote_status = vote_status
         self.uncertainty = uncertainty
-        self.opinion = opinion
         self.communicate = True
 
 

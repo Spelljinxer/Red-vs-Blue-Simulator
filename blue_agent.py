@@ -34,7 +34,7 @@ class blue_agent:
     
     def blue_move(self, green_team, grey_team):
         #if the human is playing as the blue agent
-        if self.user_playing == True:
+        if (self.user_playing):
             output = [] 
             for i in range(3):
                 # TODO make this UNIQUE
@@ -59,10 +59,7 @@ class blue_agent:
             self.energy_level -= (0.05 * (1 + green_agent_uncertainty))
 
 
-
         #passive buff
         self.energy_level += (0.01 * self.followers)
         
 
-agent = blue_agent(100, True)
-agent.blue_move([], [1])
