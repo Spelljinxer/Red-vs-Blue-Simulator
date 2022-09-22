@@ -73,6 +73,11 @@ if __name__ == "__main__":
     # fig, ax = plt.subplots()
     # ig.plot(g, target=ax)
     # plt.show()
+
+    '''
+    This section just handles user input, whether or not
+    they want to play.
+    '''
     user_playing = None
     red_user = False
     blue_user = False
@@ -89,7 +94,8 @@ if __name__ == "__main__":
     else:
         print("You have chosen not to play. The AI's will instead play.")
         user_playing = False
-    
+        
+    #---------------------THIS IS WHERE WE EXECUTE THE GAME--------------
     game = Game(10, 50, 10, 100, red_user, blue_user)
     # print("red user: " + str(red_user))
     # print("blue user: " + str(blue_user))
