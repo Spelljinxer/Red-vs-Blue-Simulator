@@ -18,6 +18,7 @@ Red Team
     - Each level has 2 messages
     - The messages' goal is to not make green agent vote
     - Although, sending one could still affect uncertainty of green agent
+- In other words, INCREASE UNCERTAINTY
 - Has Follower Loss
 
 Blue Team
@@ -25,6 +26,7 @@ Blue Team
 - Certainty Levels
 - Energy Levels
 - Can let a grey agent in (although they dont know their allegiance)
+- Goal is to make green agents vote (DECREASE UNCERTAINTY) 
 
 Green Team
 - Majority of Agents (probably 80-90)
