@@ -12,6 +12,7 @@ username@machine:~$ pip install matplotlib
 > [https://docs.google.com/document/d/1XoNAPVyNEpUasD-rrc3I7k6QzF49HbfPvaAK0cTerEA/edit?usp=sharing](https://docs.google.com/document/d/1XoNAPVyNEpUasD-rrc3I7k6QzF49HbfPvaAK0cTerEA/edit?usp=sharing)
 
 # Agents
+```
 Red Team
 - 1 Agent that has 5 levels of potent messages
 
@@ -26,5 +27,10 @@ Green Team
 Grey Team
 - Secret Allegiance to red team (unknown)
 - Rest of agents from green
-
+```
 # The Game
+```
+Will run for a simulated amount of days OR until the blue team expends all their energy
+The goal of red team is not make and green agents vote
+The goal of blue team is to make green agents vote
+```
