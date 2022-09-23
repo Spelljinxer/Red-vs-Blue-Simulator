@@ -21,9 +21,10 @@ class red_agent:
     }
     followers = None
     potency = None
-    def __init__(self):
+    def __init__(self, user_playing):
         self.followers = 0
         self.potency = 0
+        self.user_playing = user_playing
     
     def red_move(self, green_team):
         for green_agent in green_team:
