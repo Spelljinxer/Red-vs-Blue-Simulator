@@ -24,17 +24,52 @@ class red_agent:
     def __init__(self, user_playing):
         self.followers = 0
         self.potency = 0
-        self.user_playing = user_playing
+        self.user_playing = user_playing 
+    
+    def return_threshold(self, potency):
+        #potency can be any value from 0.1 - 5.0
+        if (potency < 1.6):
+            threshold = "Low"
+        elif (potency >= 1.6 and potency < 2.6):
+            threshold = "Medium low"
+        elif (potency >= 2.6 and potency < 3.6):
+            threshold = "Medium high"
+        else:
+            threshold = "High"
+        return threshold
+
+    def uncertainty_change_chance(self, probability):
+        change = random.randint(1, 10)
+        if (change <= probability):
+            return True
+        else:
+            return False
     
     def red_move(self, green_team):
+        potency = random.randint(1, 5)
+        threshhold_potency = random.randdouble(0.0, potency)
         for green_agent in green_team:
             if(green_agent.communicate == False or green_agent.vote_status == True):
                 continue
-            green_agent_uncertainty = green_agent.uncertainty
-            potency = random.randint(1, 5)
-
-            uncertainty = (green_agent_uncertainty * potency) / 10
-
+            new_uncertainty = green_agent.uncertainty
+            threshhold_potency = random.random() * potency
+            threshold = self.return_threshold(threshhold_potency)
+            if threshold == "Low":
+                probability = random.randint(1, 2)
+            elif threshold == "Medium low":
+                probability = random.randint(3, 5)
+            elif threshold == "Medium high":
+                probability = random.randint(6, 8)
+            else:
+                probability = random.randint(9, 10)
+            willUncertaintyChange = self.uncertainty_change_chance(probability)
+            if willUncertaintyChange == True:
+                new_uncertainty += 0.25
+            
+            #next is to calculate probability of changing vote status based off uncertainty 
+            
+           
+            
 
         return
 
