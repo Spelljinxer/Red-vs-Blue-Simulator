@@ -64,11 +64,21 @@ class red_agent:
                 probability = random.randint(9, 10)
             willUncertaintyChange = self.uncertainty_change_chance(probability)
             if willUncertaintyChange == True:
-                new_uncertainty += 0.25
+                if green_agent.vote_status == False:
+                    #those who are not voting (on red side) uncertainty decreases 
+                    new_uncertainty -= 0.25
+                else:
+                    #those who are voting (on blue side) uncertainty increases
+                    new_uncertainty += 0.25
             
-            #next is to calculate probability of changing vote status based off uncertainty 
+            #next is to calculate probability of changing vote status based off uncertainty lower uncertainty should produce lower probability vice versa 
+            #for now i'm using hard coded values pepelaff, I will assume for now green agents uncertainty is between -0.5 - 0.5
+            hypothetical_uncertainty_interval = [-0.5, 0.5]
+            base_probability = 0.5
+            if new_uncertainty < 0:
+                pass
             
-           
+            
             
 
         return
