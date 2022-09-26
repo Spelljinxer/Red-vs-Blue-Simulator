@@ -63,19 +63,25 @@ class red_agent:
             else:
                 probability = random.randint(9, 10)
             willUncertaintyChange = self.uncertainty_change_chance(probability)
+            hypothetical_uncertainty_interval = [-0.5, 0.5]
             if willUncertaintyChange == True:
                 if green_agent.vote_status == False:
-                    #those who are not voting (on red side) uncertainty decreases 
-                    new_uncertainty -= 0.25
+                    #those who are not voting (on red side) uncertainty decreases
+                    if (new_uncertainty - 0.25) > hypothetical_uncertainty_interval[0]:
+                        new_uncertainty -= 0.25
+                    else:
+                        new_uncertainty = hypothetical_uncertainty_interval[0]
                 else:
                     #those who are voting (on blue side) uncertainty increases
-                    new_uncertainty += 0.25
+                    if (new_uncertainty + 0.25) < hypothetical_uncertainty_interval[1]:
+                        new_uncertainty += 0.25
+                    else:
+                        new_uncertainty = hypothetical_uncertainty_interval[1]
             #something the code is yet to consider is if it stays within the bounds of the uncertainty interval, in other words, what to do if it does exceed the bounds
             #could be a simple fix just take current value and the maximum value, if +/-0.25 causes it to exceed the bounds just make it equal to the maximum value instead
             
             #next is to calculate probability of changing vote status based off uncertainty lower uncertainty should produce lower probability vice versa 
-            #for now i'm using hard coded values pepelaff, I will assume for now green agents uncertainty is between -0.5 - 0.5
-            hypothetical_uncertainty_interval = [-0.5, 0.5] #the following assumes that the first value passed into the uncertainty interval is the negative value 
+            #for now i'm using hard coded values pepelaff, I will assume for now green agents uncertainty is between -0.5 - 0.5 
             base_probability = 0.5 #chance of switching vote_status
             #for our current uncertainty_interval the maximum increase/decrease to 0.5 is 0.25, highest chance of swapping vote status is 0.25 vs 0.75
             if new_uncertainty < 0: #negative uncertainty 
