@@ -97,25 +97,7 @@ if __name__ == "__main__":
     print("uncertainty_range: ", uncertainty_range)
     print("voting_initial_prob: ", voting_initial_prob)
 
-
-
-    # user_playing = None
-    # red_user = False
-    # blue_user = False
-    # playing = input("Do you want to play? (y/n): ")
-    # if playing == "y":
-    #     user_playing = True
-    #     choice = input("Do you want to play as red or blue? (r/b): ")
-    #     if choice == "r":
-    #         red_user = True
-    #         blue_user = False
-    #     elif choice == "b":
-    #         red_user = False
-    #         blue_user = True
-    # else:
-    #     print("You have chosen not to play. The AI's will instead play.")
-    #     user_playing = False
-        
+            
     #---------------------THIS IS WHERE WE EXECUTE THE GAME--------------
     # game = Game(10, 50, 10, 100, red_user, blue_user)
     # '''
@@ -133,6 +115,25 @@ if __name__ == "__main__":
     # #connect all green nodes to each other and to the red node and blue node
     # for i in range(len(g.vs)-2):
     #     g.add_edges([(i, len(g.vs)-2), (i, len(g.vs)-1)])
+
+
+    user_playing = None
+    red_user = False
+    blue_user = False
+    playing = input("Do you want to play? (y/n): ")
+    if playing == "y":
+        user_playing = True
+        choice = input("Do you want to play as red or blue? (r/b): ")
+        if choice == "r":
+            red_user = True
+            blue_user = False
+        elif choice == "b":
+            red_user = False
+            blue_user = True
+    else:
+        print("You have chosen not to play. The AI's will instead play.")
+        user_playing = False
+
         
 
     
