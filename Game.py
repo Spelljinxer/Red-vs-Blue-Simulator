@@ -98,7 +98,6 @@ if __name__ == "__main__":
     print("voting_initial_prob: ", voting_initial_prob)
 
 
-
     # user_playing = None
     # red_user = False
     # blue_user = False
