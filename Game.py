@@ -14,6 +14,7 @@ import csv
 import igraph as ig
 import matplotlib.pyplot as plt
 import random
+import sys
 
 class Game:
     election_date = 0
@@ -60,14 +61,44 @@ class Game:
         print("The election is over!\n")
         pass
 
+
+
+
+#---------------------------------EVERYTHING BELOW RELATE TO THE MAIN EXECUTION----------------------------
+def print_usage():
+    print("""
+                Usage: python Game.py -ge [n] -gp [%] -gr [% gr_agents] -u [x,y] -p [z]
+                    -ge: number of green agents
+                    -gp: probability of connections
+                    -gr: percentage of grey_agents
+                    -u: x,y, is the uncertainty range
+                        E.g. ( -u 0,1 )
+                    -p: percentage of green agents that want to vote initially
+            """)
+
 '''
 Execute.
 '''
 if __name__ == "__main__":
-    '''
-    This section just handles user input, whether or not
-    they want to play.
-    '''
+    n = len(sys.argv)
+    #change this check if we're adding more
+    if(n != 11):
+        print_usage()
+        sys.exit(1)
+    total_Green = int(sys.argv[2])
+    probability_of_connections = float(sys.argv[4])
+    grey_agent_percentage = int(sys.argv[6])
+    uncertainty_range = list(map(int, sys.argv[8].split(",")))
+    voting_initial_prob = int(sys.argv[10])
+    
+    print("Total Green Agents: " + str(total_Green))
+    print("Probability of Connections: " + str(probability_of_connections))
+    print("grey_agent_percentage: ", grey_agent_percentage)
+    print("uncertainty_range: ", uncertainty_range)
+    print("voting_initial_prob: ", voting_initial_prob)
+
+
+
     # user_playing = None
     # red_user = False
     # blue_user = False
@@ -87,33 +118,28 @@ if __name__ == "__main__":
         
     #---------------------THIS IS WHERE WE EXECUTE THE GAME--------------
     # game = Game(10, 50, 10, 100, red_user, blue_user)
-    '''
-    Don't delete this, this is how we generate a graph
-    '''
-    green_nodes = 50
-    edges = 100
-    g = ig.Graph.Erdos_Renyi(n=green_nodes, m=edges)
-    g.add_vertices(2)
-    g.vs[-2]['colour'] = 'red'
-    g.vs[-1]['blue'] = 'blue'
-    for i in range(len(g.vs)-2):
-        g.vs[i]['colour'] = 'green'
-    
-    #connect all green nodes to each other and to the red node and blue node
-    for i in range(len(g.vs)-2):
-        g.add_edges([(i, len(g.vs)-2), (i, len(g.vs)-1)])
-        
+    # '''
+    # Don't delete this, this is how we generate a graph
+    # '''
+    # green_nodes = 50
+    # edges = 100
+    # g = ig.Graph.Erdos_Renyi(n=green_nodes, m=edges)
+    # g.add_vertices(2)
+    # g.vs[-2]['colour'] = 'red'
+    # g.vs[-1]['blue'] = 'blue'
     # for i in range(len(g.vs)-2):
-    #     for j in range(len(g.vs)-2):
-    #         if i != j:
-    #             g.add_edge(i, j)
+    #     g.vs[i]['colour'] = 'green'
     
+    # #connect all green nodes to each other and to the red node and blue node
+    # for i in range(len(g.vs)-2):
+    #     g.add_edges([(i, len(g.vs)-2), (i, len(g.vs)-1)])
+        
 
-
-
-    fig, ax = plt.subplots()
-    ig.plot(g, target=ax)
-    plt.show()
+    
+    
+    # fig, ax = plt.subplots()
+    # ig.plot(g, target=ax)
+    # plt.show()
 
     # print("red user: " + str(red_user))
     # print("blue user: " + str(blue_user))
