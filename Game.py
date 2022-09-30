@@ -12,6 +12,7 @@ import grey_agent
 
 import csv
 import igraph as ig
+import networkx as nx
 import matplotlib.pyplot as plt
 import random
 import sys
@@ -21,17 +22,31 @@ class Game:
     current_date = 1
     blue_energy_level = None
     red_agent = red_agent.red_agent(False)
-    blue_agent = blue_agent.blue_agent(blue_energy_level, False)
+    blue_agent = blue_agent.blue_agent( False)
+    green_team = []
     '''
     Constructor for the Game
     '''
-    def __init__(self, days, green_total, grey_total, blue_energy_level, red_user, blue_user):
+    def __init__(self, days, uncertainty_range, green_total, grey_total, edge_probability, red_user, blue_user):
         self.election_date = days
-        green_team = []
+        
         grey_team = []
         self.red_agent = red_agent.red_agent(red_user)
-        self.blue_agent = blue_agent.blue_agent(blue_energy_level, blue_user)
+        self.blue_agent = blue_agent.blue_agent(blue_user)
 
+        for agent_id in range(green_total):
+            vote_status = random.choice([True, False])
+            uncertainty = round(random.uniform(uncertainty_range[0], uncertainty_range[1]), 1)
+            #generate a number from the edge probability, then add edges to the agent based on that number
+            connections = []
+            for j in range(green_total):
+                if agent_id != j:
+                    # print("random.random():", random.randint(0,100))
+                    # print("edge_probability:", edge_probability)
+                    if(random.randint(0,100) < edge_probability):
+                        connections.append(j)
+            self.green_team.append(green_agent.green_agent(connections, agent_id, vote_status, uncertainty))
+    
     '''
     Increment to go the next round
     '''
@@ -50,6 +65,9 @@ class Game:
             print("Day: " + str(self.current_date))
             # red_agent.red_move()
             # blue_agent.blue_move()
+            for green_agent in self.green_team:
+                print("Green Agent", green_agent.unique_id, ":", "connections:", green_agent.connections)
+                pass
             self.next_day()
 
         if(self.current_date == self.election_date):
@@ -85,18 +103,42 @@ if __name__ == "__main__":
     if(n != 11):
         print_usage()
         sys.exit(1)
+    
+
     total_Green = int(sys.argv[2])
     probability_of_connections = float(sys.argv[4])
     grey_agent_percentage = int(sys.argv[6])
-    uncertainty_range = list(map(int, sys.argv[8].split(",")))
+
+
+    uncertainty_range = sys.argv[8]
+    uncertainty_range = [float(x.strip()) for x in uncertainty_range.split(',')]
+
     voting_initial_prob = int(sys.argv[10])
     
-    print("Total Green Agents: " + str(total_Green))
-    print("Probability of Connections: " + str(probability_of_connections))
-    print("grey_agent_percentage: ", grey_agent_percentage)
+    # print("Total Green Agents: " + str(total_Green))
+    # print("Probability of Connections: " + str(probability_of_connections))
+    # print("grey_agent_percentage: ", grey_agent_percentage)
     print("uncertainty_range: ", uncertainty_range)
-    print("voting_initial_prob: ", voting_initial_prob)
+    # print("voting_initial_prob: ", voting_initial_prob)
 
+    Game = Game(2, uncertainty_range, total_Green, grey_agent_percentage, probability_of_connections,False, False)
+    Game.execute()
+    # user_playing = None
+    # red_user = False
+    # blue_user = False
+    # playing = input("Do you want to play? (y/n): ")
+    # if playing == "y":
+    #     user_playing = True
+    #     choice = input("Do you want to play as red or blue? (r/b): ")
+    #     if choice == "r":
+    #         red_user = True
+    #         blue_user = False
+    #     elif choice == "b":
+    #         red_user = False
+    #         blue_user = True
+    # else:
+    #     print("You have chosen not to play. The AI's will instead play.")
+    #     user_playing = False
             
     #---------------------THIS IS WHERE WE EXECUTE THE GAME--------------
     # game = Game(10, 50, 10, 100, red_user, blue_user)
@@ -115,35 +157,9 @@ if __name__ == "__main__":
     # #connect all green nodes to each other and to the red node and blue node
     # for i in range(len(g.vs)-2):
     #     g.add_edges([(i, len(g.vs)-2), (i, len(g.vs)-1)])
-
-
-    user_playing = None
-    red_user = False
-    blue_user = False
-    playing = input("Do you want to play? (y/n): ")
-    if playing == "y":
-        user_playing = True
-        choice = input("Do you want to play as red or blue? (r/b): ")
-        if choice == "r":
-            red_user = True
-            blue_user = False
-        elif choice == "b":
-            red_user = False
-            blue_user = True
-    else:
-        print("You have chosen not to play. The AI's will instead play.")
-        user_playing = False
-
-        
-
-    
-    
     # fig, ax = plt.subplots()
     # ig.plot(g, target=ax)
     # plt.show()
-
-    # print("red user: " + str(red_user))
-    # print("blue user: " + str(blue_user))
 
 
 
