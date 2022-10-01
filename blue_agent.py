@@ -28,40 +28,51 @@ class blue_agent:
     def get_message_certainty_energy_loss(self, message):
         certainty = 0.0
         energy_loss = 0.0
+        uncertainty_change = 0.0
         if message == self.messages[10]:
             #idk yet
             return True
         elif message == self.messages[0]:
             certainty = 0.1
             energy_loss = 0.005
+            uncertainty_change = 0.02
         elif message == self.messages[1]:
             certainty = 0.2
             energy_loss = 0.01
+            uncertainty_change = 0.04
         elif message == self.messages[2]:
             certainty = 0.3
             energy_loss = 0.015
+            uncertainty_change = 0.06
         elif message == self.messages[3]:
             certainty = 0.4
             energy_loss = 0.02
+            uncertainty_change = 0.08
         elif message == self.messages[4]:
             certainty = 0.5
             energy_loss = 0.025
+            uncertainty_change = 0.10
         elif message == self.messages[5]:
             certainty = 0.6
             energy_loss = 0.03
+            uncertainty_change = 0.12
         elif message == self.messages[6]:
             certainty = 0.7
             energy_loss = 0.035
+            uncertainty_change = 0.14
         elif message == self.messages[7]:
             certainty = 0.8
             energy_loss = 0.04
+            uncertainty_change = 0.16
         elif message == self.messages[8]:
             certainty = 0.9
             energy_loss = 0.045
+            uncertainty_change = 0.18
         elif message == self.messages[9]:
             certainty = 1.0
             energy_loss = 0.05
-        return [certainty, energy_loss]
+            uncertainty_change = 0.2
+        return [certainty, energy_loss, uncertainty_change]                                                        
 
     def valid_move(self, output, choice, green_team, grey_team):
         if(int(choice) > len(output) or int(choice) < 1):
@@ -97,12 +108,15 @@ class blue_agent:
             uncertainty = 0
             #placeholder until we map the user input/AI choice to this variable 
             message = "RUN YOUR BOY OVER THE GRASS"
-            #handle uncertainty change here
+            certainty_energyloss_uncertaintychange = self.get_message_certainty_energy_loss(message)
+            certainty = certainty_energyloss_uncertaintychange[0]
+            energy_loss = certainty_energyloss_uncertaintychange[1]
+            if (message != self.messages[10]): #if not grey agent
+                self.energy_level -= energy_loss
+            uncertainty_change = certainty_energyloss_uncertaintychange[2]
+            #uncertainty chance
             
-            #handle chance of opinion change and change (or no change) here
-            certainty_energy_loss = self.get_message_certainty_energy_loss(message)
-            certainty = certainty_energy_loss[0]
-            energy_loss = certainty_energy_loss[1]
+            #opinion change 
             will_it = self.will_vote_status_change(certainty)
             if (will_it == True):
                 green_agent.vote_status == True
