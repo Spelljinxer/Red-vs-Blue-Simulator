@@ -70,6 +70,7 @@ class red_agent:
             uncertainty_change = potency_followerloss_uncertaintychange[2]
             #uncertainty change 
                 #since agents should not know uncertainty, how do we handle this? return a dictionary with key as green_agent id and value as appropriate change of uncertainty change?
+                #red only wants to improve the certainty of those whose vote status is false, decrease otherwise 
             #opinion change
             will_it = self.will_vote_status_change(potency)
             if (will_it == True):

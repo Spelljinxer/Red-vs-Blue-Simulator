@@ -114,7 +114,7 @@ class blue_agent:
                 self.energy_level -= energy_loss
             uncertainty_change = certainty_energyloss_uncertaintychange[2]
             #uncertainty chance
-            
+                #blue only wants to improve the certainty of those whose vote status is true, decrease it if false otherwise
             #opinion change 
             will_it = self.will_vote_status_change(certainty)
             if (will_it == True):
