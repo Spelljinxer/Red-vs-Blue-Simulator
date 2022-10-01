@@ -22,7 +22,6 @@ class blue_agent:
     followers = None
     def __init__(self, energy_level, user_playing):
         self.energy_level = energy_level
-        self.followers = 0
         self.user_playing = user_playing
     
     def get_message_certainty_energy_loss(self, message):
@@ -122,7 +121,7 @@ class blue_agent:
                 green_agent.vote_status == True
             
 
-        #passive buff
-        self.energy_level += (0.01 * self.followers)
+        #passive buff - need to rethink this later 
+        #self.energy_level += (0.01 * self.followers)
         
 

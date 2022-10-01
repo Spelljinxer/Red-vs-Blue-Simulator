@@ -32,23 +32,23 @@ class red_agent:
         follower_loss = 0
         if message == self.messages[0] or message == self.messages[1]:
             potency = 0.2
-            follower_loss = 0
+            follower_loss = 0.02
             uncertainty_change = 0.04
         elif message == self.messages[2] or message == self.messages[3]:
             potency = 0.4
-            follower_loss = 0
+            follower_loss = 0.04
             uncertainty_change = 0.08
         elif message == self.messages[4] or message == self.messages[5]:
             potency = 0.6
-            follower_loss = 0
+            follower_loss = 0.06
             uncertainty_change = 0.12
         elif message == self.messages[6] or message == self.messages[7]:
             potency = 0.8
-            follower_loss = 0
+            follower_loss = 0.08
             uncertainty_change = 0.16
         elif message == self.messages[8] or message == self.messages[9]:
             potency = 1.0
-            follower_loss = 0
+            follower_loss = 0.1
             uncertainty_change = 0.2
         return [potency, follower_loss, uncertainty_change]
 
@@ -74,7 +74,7 @@ class red_agent:
             will_it = self.will_vote_status_change(potency)
             if (will_it == True):
                 green_agent.vote_status = False
-        
+    
         return follower_loss
 
 
