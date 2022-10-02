@@ -11,10 +11,10 @@ import blue_agent
 import green_agent
 import grey_agent
 
-import csv
-import igraph as ig
-import networkx as nx
-import matplotlib.pyplot as plt
+# import csv
+# import igraph as ig
+# import networkx as nx
+# import matplotlib.pyplot as plt
 import random
 import sys
 
