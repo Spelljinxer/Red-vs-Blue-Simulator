@@ -4,7 +4,6 @@ Game Class to Execute the Game
     Reiden Rufin | 22986337
     Nathan Eden  | 22960674      
 """
-from xmlrpc.client import boolean
 import red_agent
 import blue_agent
 import green_agent
@@ -37,16 +36,18 @@ class Game:
         for agent_id in range(green_total):
             vote_status = random.choice([True, False])
             uncertainty = round(random.uniform(uncertainty_range[0], uncertainty_range[1]), 1)
-            #generate a number from the edge probability, then add edges to the agent based on that number
             connections = []
-            for j in range(green_total):
-                if agent_id != j:
-                    # print("random.random():", random.randint(0,100))
-                    # print("edge_probability:", edge_probability)
-                    if(random.randint(0,100) < edge_probability):
-                        connections.append(j)
             self.green_team.append(green_agent.green_agent(connections, agent_id, vote_status, uncertainty))
-    
+        
+        #generate an undirected graph with n nodes with p probability of an edge between any two nodes
+        for agent in self.green_team:
+            for agent2 in self.green_team:
+                probability = random.randint(0, 100)
+                if agent2.unique_id > agent.unique_id:
+                    if probability <= edge_probability:
+                        agent.connections.append(agent2.unique_id)
+                        agent2.connections.append(agent.unique_id)
+
     '''
     Increment to go the next round
     '''
@@ -67,6 +68,7 @@ class Game:
             # blue_agent.blue_move()
             for green_agent in self.green_team:
                 print("Green Agent", green_agent.unique_id, ":", "connections:", green_agent.connections)
+
                 pass
             self.next_day()
 
