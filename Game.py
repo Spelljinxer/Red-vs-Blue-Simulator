@@ -2,7 +2,9 @@
 Game Class to Execute the Game
 @Authors | @StudentId
     Reiden Rufin | 22986337
-    Nathan Eden  | 22960674      
+    Nathan Eden  | 22960674 
+
+saving this here: python Game.py -ge 100  -gp 10  -gr 10 -u 0.0,1.0 -p 20   
 """
 import red_agent
 import blue_agent
