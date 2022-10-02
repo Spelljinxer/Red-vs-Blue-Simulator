@@ -28,27 +28,37 @@ class Game:
     '''
     Constructor for the Game
     '''
-    def __init__(self, days, uncertainty_range, green_total, grey_total, edge_probability, red_user, blue_user):
+    def __init__(self, days, uncertainty_range, green_total, grey_total, edge_probability, initial_voting, red_user, blue_user):
         self.election_date = days
         
         grey_team = []
         self.red_agent = red_agent.red_agent(red_user)
         self.blue_agent = blue_agent.blue_agent(blue_user)
 
+        print("% of initial voting: " + str(initial_voting))
+        voting_pop = int(green_total * (initial_voting/100))
+        print("voting pop: " + str(voting_pop))
         for agent_id in range(green_total):
-            vote_status = random.choice([True, False])
+            
+            # vote_status = random.choice([True, False])
+            vote_status = False
             uncertainty = round(random.uniform(uncertainty_range[0], uncertainty_range[1]), 1)
             connections = []
+            while(agent_id < voting_pop):
+                vote_status = True
+                break
             self.green_team.append(green_agent.green_agent(connections, agent_id, vote_status, uncertainty))
+           
         
         #generate an undirected graph with n nodes with p probability of an edge between any two nodes
         for agent in self.green_team:
             for agent2 in self.green_team:
-                probability = random.randint(0, 100)
                 if agent2.unique_id > agent.unique_id:
-                    if probability <= edge_probability:
+                    if random.randint(0, 100) <= edge_probability:
                         agent.connections.append(agent2.unique_id)
                         agent2.connections.append(agent.unique_id)
+
+        
 
     '''
     Increment to go the next round
@@ -69,7 +79,7 @@ class Game:
             # red_agent.red_move()
             # blue_agent.blue_move()
             for green_agent in self.green_team:
-                print("Green Agent", green_agent.unique_id, ":", "connections:", green_agent.connections)
+                print("Green Agent", green_agent.unique_id, ":", "Vote Status:", green_agent.vote_status, "Uncertainty:", green_agent.uncertainty)
 
                 pass
             self.next_day()
@@ -117,7 +127,7 @@ if __name__ == "__main__":
     uncertainty_range = sys.argv[8]
     uncertainty_range = [float(x.strip()) for x in uncertainty_range.split(',')]
 
-    voting_initial_prob = int(sys.argv[10])
+    initial_voting = int(sys.argv[10])
     
     # print("Total Green Agents: " + str(total_Green))
     # print("Probability of Connections: " + str(probability_of_connections))
@@ -125,7 +135,7 @@ if __name__ == "__main__":
     print("uncertainty_range: ", uncertainty_range)
     # print("voting_initial_prob: ", voting_initial_prob)
 
-    Game = Game(2, uncertainty_range, total_Green, grey_agent_percentage, probability_of_connections,False, False)
+    Game = Game(2, uncertainty_range, total_Green, grey_agent_percentage, probability_of_connections, initial_voting, False, False)
     Game.execute()
     # user_playing = None
     # red_user = False
