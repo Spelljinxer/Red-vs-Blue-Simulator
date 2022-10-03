@@ -137,6 +137,7 @@ if __name__ == "__main__":
 
     Game = Game(2, uncertainty_range, total_Green, grey_agent_percentage, probability_of_connections, initial_voting, False, False)
     Game.execute()
+
     # user_playing = None
     # red_user = False
     # blue_user = False

@@ -19,87 +19,64 @@ class red_agent:
         8: "message 9",
         9: "message 10",
     }
+    
     followers = None
     potency = None
     def __init__(self, user_playing):
         self.followers = 0
         self.potency = 0
         self.user_playing = user_playing 
-    
-    def return_threshold(self, potency):
-        #potency can be any value from 0.1 - 5.0
-        if (potency < 1.6):
-            threshold = "Low"
-        elif (potency >= 1.6 and potency < 2.6):
-            threshold = "Medium low"
-        elif (potency >= 2.6 and potency < 3.6):
-            threshold = "Medium high"
-        else:
-            threshold = "High"
-        return threshold
+        
+    def get_message_potency_follower_loss(self, message):
+        potency = 0
+        follower_loss = 0
+        if message == self.messages[0] or message == self.messages[1]:
+            potency = 0.2
+            follower_loss = 0.02
+            uncertainty_change = 0.04
+        elif message == self.messages[2] or message == self.messages[3]:
+            potency = 0.4
+            follower_loss = 0.04
+            uncertainty_change = 0.08
+        elif message == self.messages[4] or message == self.messages[5]:
+            potency = 0.6
+            follower_loss = 0.06
+            uncertainty_change = 0.12
+        elif message == self.messages[6] or message == self.messages[7]:
+            potency = 0.8
+            follower_loss = 0.08
+            uncertainty_change = 0.16
+        elif message == self.messages[8] or message == self.messages[9]:
+            potency = 1.0
+            follower_loss = 0.1
+            uncertainty_change = 0.2
+        return [potency, follower_loss, uncertainty_change]
 
-    def uncertainty_change_chance(self, probability):
-        change = random.randint(1, 10)
-        if (change <= probability):
+    def will_vote_status_change(self, potency):
+        chance = potency * 100
+        if (random.randint(0, 100) <= chance):
             return True
-        else:
-            return False
     
     def red_move(self, green_team):
-        potency = random.randint(1, 5)
-        threshhold_potency = random.randdouble(0.0, potency)
-        for green_agent in green_team:
-            if(green_agent.communicate == False or green_agent.vote_status == True):
-                continue
-            new_uncertainty = green_agent.uncertainty
-            threshhold_potency = random.random() * potency
-            threshold = self.return_threshold(threshhold_potency)
-            if threshold == "Low":
-                probability = random.randint(1, 2)
-            elif threshold == "Medium low":
-                probability = random.randint(3, 5)
-            elif threshold == "Medium high":
-                probability = random.randint(6, 8)
-            else:
-                probability = random.randint(9, 10)
-            willUncertaintyChange = self.uncertainty_change_chance(probability)
-            hypothetical_uncertainty_interval = [-0.5, 0.5]
-            if willUncertaintyChange == True:
-                if green_agent.vote_status == False:
-                    #those who are not voting (on red side) uncertainty decreases
-                    if (new_uncertainty - 0.25) > hypothetical_uncertainty_interval[0]:
-                        new_uncertainty -= 0.25
-                    else:
-                        new_uncertainty = hypothetical_uncertainty_interval[0]
-                else:
-                    #those who are voting (on blue side) uncertainty increases
-                    if (new_uncertainty + 0.25) < hypothetical_uncertainty_interval[1]:
-                        new_uncertainty += 0.25
-                    else:
-                        new_uncertainty = hypothetical_uncertainty_interval[1]
-            #something the code is yet to consider is if it stays within the bounds of the uncertainty interval, in other words, what to do if it does exceed the bounds
-            #could be a simple fix just take current value and the maximum value, if +/-0.25 causes it to exceed the bounds just make it equal to the maximum value instead
-            
-            #next is to calculate probability of changing vote status based off uncertainty lower uncertainty should produce lower probability vice versa 
-            #for now i'm using hard coded values pepelaff, I will assume for now green agents uncertainty is between -0.5 - 0.5 
-            base_probability = 0.5 #chance of switching vote_status
-            #for our current uncertainty_interval the maximum increase/decrease to 0.5 is 0.25, highest chance of swapping vote status is 0.25 vs 0.75
-            if new_uncertainty < 0: #negative uncertainty 
-                base_probability -= (new_uncertainty/2)
-            else:
-                base_probability += (new_uncertainty/2)
-            #now a positive uncertainty makes it more likely to change, a negative uncertainty makes it less likely to change
-            #also now it scales with different uncertainty intervals
-            base_probability = base_probability * 100
-            chance = random.randint(1, 100)
-            if chance <= base_probability:
-                if vote_status == False:
-                    vote_status = True
-                else:
-                    vote_status = False
-            
-
-        return 
+        follower_loss_count = 0
+        for green_agent in green_team.agents:
+            uncertainty = 0
+            #placeholder until we map the user input/AI choice to this variable 
+            message = "Had to run a boy down in my Air Force. Pissed, cah now they got a crease in the middle"
+            potency_followerloss_uncertaintychange = self.get_message_potency_follower_loss(message)
+            potency = potency_followerloss_uncertaintychange[0]
+            follower_loss = potency_followerloss_uncertaintychange[1]
+            follower_loss_count += follower_loss
+            uncertainty_change = potency_followerloss_uncertaintychange[2]
+            #uncertainty change 
+                #since agents should not know uncertainty, how do we handle this? return a dictionary with key as green_agent id and value as appropriate change of uncertainty change?
+                #red only wants to improve the certainty of those whose vote status is false, decrease otherwise 
+            #opinion change
+            will_it = self.will_vote_status_change(potency)
+            if (will_it == True):
+                green_agent.vote_status = False
+    
+        return follower_loss
 
 
 
