@@ -20,8 +20,10 @@ class blue_agent:
         10: "summon grey agent",
     }
     followers = None
-    def __init__(self, energy_level, user_playing):
-        self.energy_level = energy_level
+   
+   def __init__(self, user_playing):
+        self.followers = 0
+
         self.user_playing = user_playing
     
     def get_message_certainty_energy_loss(self, message):
