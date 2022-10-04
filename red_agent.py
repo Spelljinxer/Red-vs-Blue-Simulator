@@ -59,24 +59,27 @@ class red_agent:
     
     def red_move(self, green_team):
         follower_loss_count = 0
-        for green_agent in green_team.agents:
-            uncertainty = 0
-            #placeholder until we map the user input/AI choice to this variable 
-            message = "Had to run a boy down in my Air Force. Pissed, cah now they got a crease in the middle"
-            potency_followerloss_uncertaintychange = self.get_message_potency_follower_loss(message)
-            potency = potency_followerloss_uncertaintychange[0]
-            follower_loss = potency_followerloss_uncertaintychange[1]
-            follower_loss_count += follower_loss
-            uncertainty_change = potency_followerloss_uncertaintychange[2]
-            #uncertainty change 
-                #since agents should not know uncertainty, how do we handle this? return a dictionary with key as green_agent id and value as appropriate change of uncertainty change?
-                #red only wants to improve the certainty of those whose vote status is false, decrease otherwise 
-            #opinion change
-            will_it = self.will_vote_status_change(potency)
-            if (will_it == True):
-                green_agent.vote_status = False
+        if green_team.communicate == False:
+            for green_agent in green_team.agents:
+                uncertainty = 0
+                #placeholder until we map the user input/AI choice to this variable 
+                message = "Had to run a boy down in my Air Force. Pissed, cah now they got a crease in the middle"
+                potency_followerloss_uncertaintychange = self.get_message_potency_follower_loss(message)
+                potency = potency_followerloss_uncertaintychange[0]
+                follower_loss = potency_followerloss_uncertaintychange[1]
+                follower_loss_count += follower_loss
+                uncertainty_change = potency_followerloss_uncertaintychange[2]
+                #uncertainty change 
+                if green_agent.vote_status == True:
+                    uncertainty_change = -uncertainty_change
+                    #since agents should not know uncertainty, how do we handle this? return a dictionary with key as green_agent id and value as appropriate change of uncertainty change?
+                    #red only wants to improve the certainty of those whose vote status is false, decrease otherwise 
+                #opinion change
+                will_it = self.will_vote_status_change(potency)
+                if (will_it == True):
+                    green_agent.vote_status = False
     
-        return follower_loss
+        return [uncertainty_change, follower_loss]
 
 
 
