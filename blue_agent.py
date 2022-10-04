@@ -21,7 +21,7 @@ class blue_agent:
     }
     followers = None
    
-   def __init__(self, user_playing):
+    def __init__(self, user_playing):
         self.followers = 0
 
         self.user_playing = user_playing
