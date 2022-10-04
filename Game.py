@@ -4,7 +4,7 @@ Game Class to Execute the Game
     Reiden Rufin | 22986337
     Nathan Eden  | 22960674 
 
-saving this here: python Game.py -ge 100  -gp 10  -gr 10 -u 0.0,1.0 -p 20   
+saving this here: python Game.py -ge 15 -gp 10 -gr 10 -u 0.0,1.0 -p 20  
 """
 import red_agent
 import blue_agent
@@ -75,7 +75,9 @@ class Game:
             #not election day
             pass
     
-    
+    def green_interaction(opinion_a, uncertainty_a, opinion_b, uncertainty_b):
+        return 0
+
     def execute(self):
         while self.blue_agent.energy_level != 0:
             # red_agent.red_move()
@@ -108,7 +110,6 @@ class Game:
                                     pass
                                 else:
                                     pass
-                    print("edges visited:", green_nodes_visited)
             # for green_agent in self.green_team:
             #     # print("Green Agent", green_agent.unique_id, ":", "Vote Status:", green_agent.vote_status, "Uncertainty:", green_agent.uncertainty)
             #     if(green_agent.connections):
@@ -119,11 +120,6 @@ class Game:
             #                 pass
             #             # print("Neighbor:", neighbour, "vote_status:", self.green_team[neighbour].vote_status, "uncertainty:", self.green_team[neighbour].uncertainty)
             #             # if self.green_team[neighbour].vote_status == True:
-
-
-            
-
-
             # print("Total Green Agents Voting:", who_wants_to_vote)
             self.blue_agent.energy_level -= 1
             print("====== NEXT ROUND ======\n")
