@@ -20,10 +20,9 @@ class blue_agent:
         10: "summon grey agent",
     }
     followers = None
-   
+    energy_level = 2
     def __init__(self, user_playing):
         self.followers = 0
-
         self.user_playing = user_playing
     
     def get_message_certainty_energy_loss(self, message):
@@ -116,7 +115,7 @@ class blue_agent:
                 self.energy_level -= energy_loss
             uncertainty_change = certainty_energyloss_uncertaintychange[2]
             #uncertainty chance
-            if green_agent.status == False:
+            if green_agent.vote_status == False:
                 #blue only wants to improve the certainty of those whose vote status is true, decrease it if false otherwise
                 uncertainty_change = -uncertainty_change
             #opinion change 
@@ -127,5 +126,3 @@ class blue_agent:
 
         #passive buff - need to rethink this later 
         #self.energy_level += (0.01 * self.followers)
-        
-

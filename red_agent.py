@@ -30,6 +30,7 @@ class red_agent:
     def get_message_potency_follower_loss(self, message):
         potency = 0
         follower_loss = 0
+        uncertainty_change = 0
         if message == self.messages[0] or message == self.messages[1]:
             potency = 0.2
             follower_loss = 0.02
@@ -59,8 +60,8 @@ class red_agent:
     
     def red_move(self, green_team):
         follower_loss_count = 0
-        if green_team.communicate == False:
-            for green_agent in green_team.agents:
+        for green_agent in green_team:
+            if(green_agent.communicate == True):
                 uncertainty = 0
                 #placeholder until we map the user input/AI choice to this variable 
                 message = "Had to run a boy down in my Air Force. Pissed, cah now they got a crease in the middle"
