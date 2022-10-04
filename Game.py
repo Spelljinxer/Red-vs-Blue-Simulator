@@ -37,7 +37,6 @@ class Game:
         
         grey_total = int(green_total * gp_as_percent)
         for agent_id in range(int(gp_as_percent * green_total)):
-            #append 50% chance of being red or blue
             if random.random() < 0.5:
                 self.grey_team.append(grey_agent.grey_agent("Red", agent_id))
             else:
@@ -45,6 +44,7 @@ class Game:
         
         new_green_total = green_total - (green_total * gp_as_percent)
         voting_pop = int(new_green_total * (initial_voting/100))
+        # print("voting_pop:", voting_pop)
         for agent_id in range(int(new_green_total)):
             vote_status = False
             uncertainty = round(random.uniform(uncertainty_range[0], uncertainty_range[1]), 1)
@@ -63,8 +63,6 @@ class Game:
                         agent.connections.append(agent2.unique_id)
                         agent2.connections.append(agent.unique_id)
 
-        
-
     '''
     Increment to go the next round
     '''
@@ -79,16 +77,56 @@ class Game:
     
     
     def execute(self):
-        while self.current_date < self.election_date:
-            print("Day: " + str(self.current_date))
+        while self.blue_agent.energy_level != 0:
             # red_agent.red_move()
             # blue_agent.blue_move()
+            # red_agent_uncertainty_change, follower_loss = self.red_agent.red_move(self.green_team)
+            # val3, val4, = self.blue_agent.blue_move(self.green_team, self.grey_team)
+            # who_wants_to_vote = 0
+            edge_list = []
+            for agent in self.green_team:
+                for neighbour in agent.connections:
+                    edge_list.append((agent.unique_id, neighbour))
+            print("All edges=", edge_list)
+
+            green_nodes_visited = []    
+            for green_agent in self.green_team:
+                if(green_agent.connections):
+                    print("Green Agent: ", green_agent.unique_id, "|", "connections:", green_agent.connections, "|", "uncertainty:", green_agent.uncertainty)
+                    for neighbor in green_agent.connections:
+                        if(neighbor > green_agent.unique_id):
+                            continue
+                        else:
+                            if((green_agent.unique_id, neighbor) not in green_nodes_visited):
+                                green_nodes_visited.append((green_agent.unique_id, neighbor))
+                                
+                                neighbor_uncertainty = self.green_team[neighbor].uncertainty
+                                neighbor_vote_status = self.green_team[neighbor].vote_status
+                                print("green_agent_uncertainty:", green_agent.uncertainty)
+                                print("neighbor_uncertainty:", neighbor_uncertainty)
+                                if(green_agent.vote_status == True):
+                                    pass
+                                else:
+                                    pass
+                    print("edges visited:", green_nodes_visited)
             # for green_agent in self.green_team:
             #     # print("Green Agent", green_agent.unique_id, ":", "Vote Status:", green_agent.vote_status, "Uncertainty:", green_agent.uncertainty)
-            #     pass
-            for grey_agent in self.grey_team:
-                print("Grey Agent:", grey_agent.id, ":", "Team:", grey_agent.team)
-                pass
+            #     if(green_agent.connections):
+            #         green_nodes_visited.append(green_agent.unique_id)
+            #         print("Green Agent: ", green_agent.unique_id, "|", "connections: ", green_agent.connections)
+            #         for neighbour in green_agent.connections:
+            #             if neighbour not in green_nodes_visited:
+            #                 pass
+            #             # print("Neighbor:", neighbour, "vote_status:", self.green_team[neighbour].vote_status, "uncertainty:", self.green_team[neighbour].uncertainty)
+            #             # if self.green_team[neighbour].vote_status == True:
+
+
+            
+
+
+            # print("Total Green Agents Voting:", who_wants_to_vote)
+            self.blue_agent.energy_level -= 1
+            print("====== NEXT ROUND ======\n")
             self.next_day()
 
         if(self.current_date == self.election_date):
@@ -108,10 +146,11 @@ def print_usage():
     print("""
                 Usage: python Game.py -ge [n] -gp [%] -gr [% gr_agents] -u [x,y] -p [z]
                     -ge: number of green agents
-                    -gp: probability of connections
-                    -gr: percentage of grey_agents
+                    -gp: probability of connections between green agents
+                    -gr: percentage of green_pop that are grey_agents
                     -u: x,y, is the uncertainty range
-                        E.g. ( -u 0,1 )
+                        E.g. ( -u 0,1 ) will give us an uncertainty range
+                                between 0 and 1
                     -p: percentage of green agents that want to vote initially
             """)
 
@@ -136,12 +175,18 @@ if __name__ == "__main__":
 
     initial_voting = int(sys.argv[10])
     
-    # print("Total Green Agents: " + str(total_Green))
-    # print("Probability of Connections: " + str(probability_of_connections))
-    # print("grey_agent_percentage: ", grey_agent_percentage)
-    # print("uncertainty_range: ", uncertainty_range)
-    # print("voting_initial_prob: ", voting_initial_prob)
 
+    print("Confirming...")
+    print("\t- Total Green Agents: " + str(total_Green))
+    print("\t- Probability of Connections: " + str(probability_of_connections))
+    print("\t- % of pop that are grey agents: ", grey_agent_percentage)
+    print("\t- uncertainty_range: ", uncertainty_range)
+    print("\t- initial_voting: ", initial_voting)
+    print("Are you sure you want to continue? (y/n)")
+    confirm = input()
+    if(confirm != "y"):
+        print("Exiting...")
+        sys.exit(1)
     Game = Game(2, uncertainty_range, total_Green, grey_agent_percentage, probability_of_connections, initial_voting, False, False)
     Game.execute()
 
