@@ -8,7 +8,6 @@ Grey Agent
 import random
 
 class grey_agent:
-    connections = []
     blue_messages = {
         0: "message 1",
         1: "message 2",
@@ -36,8 +35,7 @@ class grey_agent:
         9: "message 10",
     }
     
-    def __init__(self, connections, team, id):
-        self.connections = connections
+    def __init__(self, team, id):
         #which team they are working for
         self.team = team
         #agents unique ID
