@@ -105,7 +105,6 @@ class blue_agent:
         
         #Execute the rest of the code if human is not playing as blue agent
         for green_agent in green_team:
-            uncertainty = 0
             #placeholder until we map the user input/AI choice to this variable 
             message = "RUN YOUR BOY OVER THE GRASS"
             certainty_energyloss_uncertaintychange = self.get_message_certainty_energy_loss(message)
