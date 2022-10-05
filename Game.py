@@ -75,30 +75,29 @@ class Game:
             #not election day
             pass
     
-    def green_interaction(opinion_a, uncertainty_a, opinion_b, uncertainty_b):
+    def green_interaction(self, green_agent, neighbor_node):
         #dominating (LOWER UNCERTAINTY) opinion wins
-        lowest_uncertainty = min(uncertainty_a, uncertainty_b)
-        new_uncertainty = 0
-        opinion_to_use = opinion_a
-        if lowest_uncertainty == uncertainty_b:
-            opinion_to_use = opinion_b
         
-        return opinion_to_use, new_uncertainty
+        if(green_agent.uncertainty == neighbor_node.uncertainty):
+            print("Same Uncertainty found")
+            pass
+        #neighbor agent wins so update green agent
+        elif(green_agent.uncertainty > neighbor_node.uncertainty):
+            new_uncertainty = abs(green_agent.uncertainty - neighbor_node.uncertainty) * 0.25
+            green_agent.vote_status = neighbor_node.vote_status
+            green_agent.uncertainty -= new_uncertainty
+            green_agent.uncertainty = round(green_agent.uncertainty, 1)
+            pass
+        #green agent wins so update neighbor node
+        elif(green_agent.uncertainty < neighbor_node.uncertainty):
+            new_uncertainty = abs(neighbor_node.uncertainty - green_agent.uncertainty) * 0.25
+            neighbor_node.vote_status = green_agent.vote_status
+            neighbor_node.uncertainty -= new_uncertainty
+            neighbor_node.uncertainty = round(neighbor_node.uncertainty, 1)
+            pass
 
     def execute(self):
         while self.blue_agent.energy_level != 0:
-            # red_agent.red_move()
-            # blue_agent.blue_move()
-            # red_agent_uncertainty_change, follower_loss = self.red_agent.red_move(self.green_team)
-            # val3, val4, = self.blue_agent.blue_move(self.green_team, self.grey_team)
-            # who_wants_to_vote = 0
-
-            #might not be needed here (only used for checking)
-            edge_list = []
-            for agent in self.green_team:
-                for neighbour in agent.connections:
-                    edge_list.append((agent.unique_id, neighbour))
-
             green_nodes_visited = []    
             for green_agent in self.green_team:
                 if(green_agent.connections):
@@ -109,26 +108,14 @@ class Game:
                         else:
                             if((green_agent.unique_id, neighbor) not in green_nodes_visited):
                                 green_nodes_visited.append((green_agent.unique_id, neighbor))
+                                print("-------NEXT NODE-----")
+                                print("BEFORE CHANGE| Green Agent: ", green_agent.unique_id, "|", "uncertainty:", green_agent.uncertainty, "|", "vote_status:", green_agent.vote_status)
+                                print("BEFORE CHANGE| neighbor:", neighbor, "|", "uncertainty:", self.green_team[neighbor].uncertainty, "|", "vote_status:", self.green_team[neighbor].vote_status)
+                                self.green_interaction(green_agent, self.green_team[neighbor])
+                                print("AFTER CHANGE| Green Agent: ", green_agent.unique_id, "|", "uncertainty:", green_agent.uncertainty, "|", "vote_status:", green_agent.vote_status)
+                                print("AFTER CHANGE| neighbor:", neighbor, "|", "uncertainty:", self.green_team[neighbor].uncertainty, "|", "vote_status:", self.green_team[neighbor].vote_status)
                                 
-                                neighbor_uncertainty = self.green_team[neighbor].uncertainty
-                                neighbor_vote_status = self.green_team[neighbor].vote_status
-                                # print("green_agent_uncertainty:", green_agent.uncertainty)
-                                # print("neighbor_uncertainty:", neighbor_uncertainty)
-                                if(green_agent.vote_status == True):
-                                    pass
-                                else:
-                                    pass
-            # for green_agent in self.green_team:
-            #     # print("Green Agent", green_agent.unique_id, ":", "Vote Status:", green_agent.vote_status, "Uncertainty:", green_agent.uncertainty)
-            #     if(green_agent.connections):
-            #         green_nodes_visited.append(green_agent.unique_id)
-            #         print("Green Agent: ", green_agent.unique_id, "|", "connections: ", green_agent.connections)
-            #         for neighbour in green_agent.connections:
-            #             if neighbour not in green_nodes_visited:
-            #                 pass
-            #             # print("Neighbor:", neighbour, "vote_status:", self.green_team[neighbour].vote_status, "uncertainty:", self.green_team[neighbour].uncertainty)
-            #             # if self.green_team[neighbour].vote_status == True:
-            # print("Total Green Agents Voting:", who_wants_to_vote)
+
             self.blue_agent.energy_level -= 1
             print("====== NEXT ROUND ======\n")
             self.next_day()

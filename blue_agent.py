@@ -20,7 +20,7 @@ class blue_agent:
         10: "summon grey agent",
     }
     followers = None
-    energy_level = 100
+    energy_level = 1
     def __init__(self, user_playing):
         self.followers = 0
         self.user_playing = user_playing
