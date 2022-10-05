@@ -30,6 +30,7 @@ class red_agent:
     def get_message_potency_follower_loss(self, message):
         potency = 0
         follower_loss = 0
+        uncertainty_change = 0
         if message == self.messages[0] or message == self.messages[1]:
             potency = 0.2
             follower_loss = 0.02

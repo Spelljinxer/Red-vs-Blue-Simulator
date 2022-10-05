@@ -113,7 +113,7 @@ class blue_agent:
                 self.energy_level -= energy_loss
             uncertainty_change = certainty_energyloss_uncertaintychange[2]
             #uncertainty chance
-            if green_agent.status == False:
+            if green_agent.vote_status == False:
                 #blue only wants to improve the certainty of those whose vote status is true, decrease it if false otherwise
                 uncertainty_change = -uncertainty_change
             #opinion change 
@@ -124,5 +124,3 @@ class blue_agent:
 
         #passive buff - need to rethink this later 
         #self.energy_level += (0.01 * self.followers)
-        
-
