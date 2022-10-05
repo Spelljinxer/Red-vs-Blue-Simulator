@@ -54,9 +54,7 @@ class red_agent:
         return [potency, follower_loss, uncertainty_change]
 
     def will_vote_status_change(self, potency):
-        chance = potency * 100
-        if (random.randint(0, 100) <= chance):
-            return True
+        return random.randint(0, 100) <= potency * 100
     
     def red_move(self, green_team):
         follower_loss_count = 0

@@ -35,7 +35,6 @@ class Game:
         self.blue_agent = blue_agent.blue_agent(blue_user)
         gp_as_percent = grey_percent / 100
         
-        grey_total = int(green_total * gp_as_percent)
         for agent_id in range(int(gp_as_percent * green_total)):
             if random.random() < 0.5:
                 self.grey_team.append(grey_agent.grey_agent("Red", agent_id))
@@ -65,7 +64,6 @@ class Game:
 
     def green_interaction(self, green_agent, neighbor_node):
         #dominating (LOWER UNCERTAINTY) opinion wins
-        
         if(green_agent.uncertainty == neighbor_node.uncertainty):
             #empty for now.
             pass
@@ -86,27 +84,49 @@ class Game:
 
     def execute(self):
         while self.blue_agent.energy_level != 0:
+            
+            
+            total_voting = 0
+            
+            for green_agent in self.green_team:
+                # print("Green Agent: ", green_agent.unique_id, "|", "connections", green_agent.connections, "|","uncertainty:", green_agent.uncertainty, "|", "vote_status:", green_agent.vote_status)
+                if(green_agent.vote_status == True):
+                    total_voting += 1
+            
+            print("Total Voting:", total_voting)
             green_nodes_visited = []    
             for green_agent in self.green_team:
                 if(green_agent.connections):
-                    # print("Green Agent: ", green_agent.unique_id, "|", "connections:", green_agent.connections, "|", "uncertainty:", green_agent.uncertainty)
                     for neighbor in green_agent.connections:
                         if(neighbor > green_agent.unique_id):
                             continue
                         else:
                             if((green_agent.unique_id, neighbor) not in green_nodes_visited):
                                 green_nodes_visited.append((green_agent.unique_id, neighbor))
+                                
+                                # if(green_agent.uncertainty < self.green_team[neighbor].uncertainty):
+                                #     new_uncertainty = abs(self.green_team[neighbor].uncertainty - green_agent.uncertainty) / 2
+                                #     self.green_team[neighbor].vote_status = green_agent.vote_status
+                                #     self.green_team[neighbor].uncertainty -= new_uncertainty
+                                #     self.green_team[neighbor].uncertainty = round(self.green_team[neighbor].uncertainty, 1)
+                                # else:
+                                #     new_uncertainty = abs(green_agent.uncertainty - self.green_team[neighbor].uncertainty) / 2
+                                #     green_agent.vote_status = self.green_team[neighbor].vote_status
+                                #     green_agent.uncertainty -= new_uncertainty
+                                #     green_agent.uncertainty = round(green_agent.uncertainty, 1)
+
+                                #     pass
+
                                 self.green_interaction(green_agent, self.green_team[neighbor])
 
-            self.blue_agent.energy_level -= 1
             print("====== NEXT ROUND ======\n")
+            self.blue_agent.energy_level -= 1
+            
 
         print("---------------------")
         #end of game
         print("The election is over!\n")
         pass
-
-
 
 
 #---------------------------------EVERYTHING BELOW RELATE TO THE MAIN EXECUTION----------------------------
@@ -158,6 +178,7 @@ if __name__ == "__main__":
     Game = Game(2, uncertainty_range, total_Green, grey_agent_percentage, probability_of_connections, initial_voting, False, False)
     Game.execute()
 
+    sys.exit(1)
     # user_playing = None
     # red_user = False
     # blue_user = False
