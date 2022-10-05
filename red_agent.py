@@ -52,6 +52,13 @@ class red_agent:
             uncertainty_change = 0.2
         return [potency, follower_loss, uncertainty_change]
 
+    def valid_move(self, output, choice, green_team):
+        if(int(choice) > len(output) or int(choice) < 1):
+            print("Invalid move. Moves have been randomised again.")
+            self.red_move(green_team)
+        else:
+            print("You have chosen: " + output[int(choice) - 1])
+
     def will_vote_status_change(self, potency):
         chance = potency * 100
         if (random.randint(0, 100) <= chance):
