@@ -78,7 +78,6 @@ class red_agent:
         if green_team.communicate == True:
             for green_agent in green_team.agents:
                 #placeholder until we map the user input/AI choice to this variable 
-                message = "Had to run a boy down in my Air Force. Pissed, cah now they got a crease in the middle"
                 potency_followerloss_uncertaintychange = self.get_message_potency_follower_loss(message)
                 potency = potency_followerloss_uncertaintychange[0]
                 follower_loss = potency_followerloss_uncertaintychange[1]
