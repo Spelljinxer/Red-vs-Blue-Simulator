@@ -63,18 +63,6 @@ class Game:
                         agent.connections.append(agent2.unique_id)
                         agent2.connections.append(agent.unique_id)
 
-    '''
-    Increment to go the next round
-    '''
-    def next_day(self):
-        self.current_date += 1
-        if self.current_date == self.election_date:
-            #election day
-            pass
-        else:
-            #not election day
-            pass
-    
     def green_interaction(self, green_agent, neighbor_node):
         #dominating (LOWER UNCERTAINTY) opinion wins
         
@@ -108,21 +96,10 @@ class Game:
                         else:
                             if((green_agent.unique_id, neighbor) not in green_nodes_visited):
                                 green_nodes_visited.append((green_agent.unique_id, neighbor))
-                                print("-------NEXT NODE-----")
-                                print("BEFORE CHANGE| Green Agent: ", green_agent.unique_id, "|", "uncertainty:", green_agent.uncertainty, "|", "vote_status:", green_agent.vote_status)
-                                print("BEFORE CHANGE| neighbor:", neighbor, "|", "uncertainty:", self.green_team[neighbor].uncertainty, "|", "vote_status:", self.green_team[neighbor].vote_status)
                                 self.green_interaction(green_agent, self.green_team[neighbor])
-                                print("AFTER CHANGE| Green Agent: ", green_agent.unique_id, "|", "uncertainty:", green_agent.uncertainty, "|", "vote_status:", green_agent.vote_status)
-                                print("AFTER CHANGE| neighbor:", neighbor, "|", "uncertainty:", self.green_team[neighbor].uncertainty, "|", "vote_status:", self.green_team[neighbor].vote_status)
-                                
 
             self.blue_agent.energy_level -= 1
             print("====== NEXT ROUND ======\n")
-            self.next_day()
-
-        if(self.current_date == self.election_date):
-            print("Election Day: " + str(self.current_date))
-            self.next_day()
 
         print("---------------------")
         #end of game
