@@ -53,6 +53,13 @@ class red_agent:
             uncertainty_change = 0.2
         return [potency, follower_loss, uncertainty_change]
 
+    def valid_move(self, output, choice, green_team):
+        if(int(choice) > len(output) or int(choice) < 1):
+            print("Invalid move. Moves have been randomised again.")
+            self.red_move(green_team)
+        else:
+            print("You have chosen: " + output[int(choice) - 1])
+
     def will_vote_status_change(self, potency):
         chance = potency * 100
         if (random.randint(0, 100) <= chance):
@@ -60,11 +67,18 @@ class red_agent:
     
     def red_move(self, green_team):
         follower_loss_count = 0
-        for green_agent in green_team:
-            if(green_agent.communicate == True):
-                uncertainty = 0
+        if (self.user_playing):
+            output = []
+            for i in range(3):
+                message = random.choice(list(self.massages.values()))
+                if message not in output:
+                    output.append(message)
+                choice = input("Choose a message to send: (1-3): " + str(output) + "\n")
+                self.valid_move(output, choice, green_team)
+        
+        if green_team.communicate == True:
+            for green_agent in green_team.agents:
                 #placeholder until we map the user input/AI choice to this variable 
-                message = "Had to run a boy down in my Air Force. Pissed, cah now they got a crease in the middle"
                 potency_followerloss_uncertaintychange = self.get_message_potency_follower_loss(message)
                 potency = potency_followerloss_uncertaintychange[0]
                 follower_loss = potency_followerloss_uncertaintychange[1]
@@ -73,7 +87,6 @@ class red_agent:
                 #uncertainty change 
                 if green_agent.vote_status == True:
                     uncertainty_change = -uncertainty_change
-                    #since agents should not know uncertainty, how do we handle this? return a dictionary with key as green_agent id and value as appropriate change of uncertainty change?
                     #red only wants to improve the certainty of those whose vote status is false, decrease otherwise 
                 #opinion change
                 will_it = self.will_vote_status_change(potency)
