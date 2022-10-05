@@ -79,18 +79,18 @@ class Game:
         #dominating (LOWER UNCERTAINTY) opinion wins
         
         if(green_agent.uncertainty == neighbor_node.uncertainty):
-            print("Same Uncertainty found")
+            #empty for now.
             pass
         #neighbor agent wins so update green agent
         elif(green_agent.uncertainty > neighbor_node.uncertainty):
-            new_uncertainty = abs(green_agent.uncertainty - neighbor_node.uncertainty) * 0.25
+            new_uncertainty = abs(green_agent.uncertainty - neighbor_node.uncertainty) / 2
             green_agent.vote_status = neighbor_node.vote_status
             green_agent.uncertainty -= new_uncertainty
             green_agent.uncertainty = round(green_agent.uncertainty, 1)
             pass
         #green agent wins so update neighbor node
         elif(green_agent.uncertainty < neighbor_node.uncertainty):
-            new_uncertainty = abs(neighbor_node.uncertainty - green_agent.uncertainty) * 0.25
+            new_uncertainty = abs(neighbor_node.uncertainty - green_agent.uncertainty) / 2
             neighbor_node.vote_status = green_agent.vote_status
             neighbor_node.uncertainty -= new_uncertainty
             neighbor_node.uncertainty = round(neighbor_node.uncertainty, 1)
