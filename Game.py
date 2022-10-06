@@ -47,7 +47,7 @@ class Game:
         voting_pop = int(new_green_total * (initial_voting/100))
         for agent_id in range(int(new_green_total)):
             vote_status = False
-            uncertainty = round(random.uniform(uncertainty_range[0], uncertainty_range[1]), 1)
+            uncertainty = round(random.uniform(uncertainty_range[0], uncertainty_range[1]), 2)
             connections = []
             while(agent_id < voting_pop):
                 vote_status = True
@@ -93,9 +93,12 @@ class Game:
                     total_voting += 1
                 if(green_agent.communicate == True):
                     self.red_agent.followers += 1
-                
-                self.red_agent.new_red_move(green_agent, red_message)
-            
+                print("next node")
+                print("BEFORE CHANGE", "Green Agent:", green_agent.unique_id, "Vote Status:", green_agent.vote_status, "Uncertainty:", green_agent.uncertainty)
+                red_uncertainty_change, follower_loss = self.red_agent.new_red_move(green_agent, red_message)
+                green_agent.uncertainty += red_uncertainty_change
+                print("AFTER CHANGE", "Green Agent:", green_agent.unique_id, "Vote Status:", green_agent.vote_status, "Uncertainty:", green_agent.uncertainty)
+
             #green interaction with each other per round
             green_nodes_visited = []    
             for green_agent in self.green_team:
