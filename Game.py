@@ -31,8 +31,8 @@ class Game:
     Constructor for the Game
     '''
     def __init__(self, uncertainty_range, green_total, grey_percent, edge_probability, initial_voting, red_user, blue_user):
-        upper_limit = uncertainty_range[1]
-        lower_limit = uncertainty_range[0]
+        self.upper_limit = uncertainty_range[1]
+        self.lower_limit = uncertainty_range[0]
         self.red_agent = red_agent.red_agent(red_user)
         self.blue_agent = blue_agent.blue_agent(blue_user)
         gp_as_percent = grey_percent / 100
@@ -94,20 +94,20 @@ class Game:
             red_message = self.red_agent.send_message()
             total_follower_loss = 0
             for green_agent in self.green_team:
+                # print("BEFORE RED|Green Agent: ", green_agent.unique_id, "|", "vote_status: ", green_agent.vote_status, "|",  "uncertainty: ", green_agent.uncertainty)
                 if(green_agent.vote_status):
                     total_voting += 1
                 if(green_agent.communicate):
                     self.red_agent.followers += 1
                 
-                red_uncertainty_change, follower_loss = self.red_agent.red_move(self.green_team, red_message)
+                red_uncertainty_change, follower_loss = self.red_agent.red_move(green_agent, red_message)
                 total_follower_loss += follower_loss
-                if(green_agent.uncertainty + red_uncertainty_change > self.upper_limit):
+                green_agent.uncertainty += red_uncertainty_change
+                if(green_agent.uncertainty > self.upper_limit):
                     green_agent.uncertainty = self.upper_limit
-                elif(green_agent.uncertainty - red_uncertainty_change < self.lower_limit):
+                elif(green_agent.uncertainty < self.lower_limit):
                     green_agent.uncertainty = self.lower_limit
-                else:
-                    green_agent.uncertainty += red_uncertainty_change
-
+                # print("AFTER RED|Green Agent: ", green_agent.unique_id, "vote_status: ", green_agent.vote_status, "uncertainty: ", green_agent.uncertainty)
             index = 0
             while(index < round(total_follower_loss)):
                 green_agent_stop = random.choice(self.green_team)
@@ -126,6 +126,8 @@ class Game:
                             if((green_agent.unique_id, neighbor) not in green_nodes_visited):
                                 green_nodes_visited.append((green_agent.unique_id, neighbor))
                                 self.green_interaction(green_agent, self.green_team[neighbor])
+
+                print("Green Agent: ", green_agent.unique_id, "|", "vote_status: ", green_agent.vote_status, "|",  "uncertainty: ", green_agent.uncertainty)
             
             print("Total Voting Population: ", total_voting)
             print("Total Red Followers", self.red_agent.followers)
