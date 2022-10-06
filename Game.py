@@ -25,10 +25,14 @@ class Game:
     blue_agent = blue_agent.blue_agent( False)
     green_team = []
     grey_team = []
+    upper_limit = 0.0
+    lower_limit = 0.0
     '''
     Constructor for the Game
     '''
     def __init__(self, uncertainty_range, green_total, grey_percent, edge_probability, initial_voting, red_user, blue_user):
+        upper_limit = uncertainty_range[1]
+        lower_limit = uncertainty_range[0]
         self.red_agent = red_agent.red_agent(red_user)
         self.blue_agent = blue_agent.blue_agent(blue_user)
         gp_as_percent = grey_percent / 100
@@ -47,14 +51,13 @@ class Game:
         voting_pop = int(new_green_total * (initial_voting/100))
         for agent_id in range(int(new_green_total)):
             vote_status = False
-            uncertainty = round(random.uniform(uncertainty_range[0], uncertainty_range[1]), 1)
+            uncertainty = round(random.uniform(uncertainty_range[0], uncertainty_range[1]), 2)
             connections = []
             while(agent_id < voting_pop):
                 vote_status = True
                 break
             self.green_team.append(green_agent.green_agent(connections, agent_id, vote_status, uncertainty))
            
-        
         #generate an undirected graph with n nodes with p probability of an edge between any two nodes
         for agent in self.green_team:
             for agent2 in self.green_team:
@@ -86,16 +89,32 @@ class Game:
     def execute(self):
         #Every round...
         while self.blue_agent.energy_level != 0:
+
             total_voting = 0
             red_message = self.red_agent.send_message()
+            total_follower_loss = 0
             for green_agent in self.green_team:
-                if(green_agent.vote_status == True):
+                if(green_agent.vote_status):
                     total_voting += 1
-                if(green_agent.communicate == True):
+                if(green_agent.communicate):
                     self.red_agent.followers += 1
                 
-                self.red_agent.new_red_move(green_agent, red_message)
-            
+                red_uncertainty_change, follower_loss = self.red_agent.red_move(self.green_team, red_message)
+                total_follower_loss += follower_loss
+                if(green_agent.uncertainty + red_uncertainty_change > self.upper_limit):
+                    green_agent.uncertainty = self.upper_limit
+                elif(green_agent.uncertainty - red_uncertainty_change < self.lower_limit):
+                    green_agent.uncertainty = self.lower_limit
+                else:
+                    green_agent.uncertainty += red_uncertainty_change
+
+            index = 0
+            while(index < round(total_follower_loss)):
+                green_agent_stop = random.choice(self.green_team)
+                if(green_agent_stop.communicate):
+                    green_agent_stop.communicate = False
+                    self.red_agent.followers -= 1
+                    index += 1
             #green interaction with each other per round
             green_nodes_visited = []    
             for green_agent in self.green_team:
@@ -107,12 +126,14 @@ class Game:
                             if((green_agent.unique_id, neighbor) not in green_nodes_visited):
                                 green_nodes_visited.append((green_agent.unique_id, neighbor))
                                 self.green_interaction(green_agent, self.green_team[neighbor])
+            
+            print("Total Voting Population: ", total_voting)
+            print("Total Red Followers", self.red_agent.followers)
             #reset the count 
-            # print("Total Voting:", total_voting)
-            # print("Total red followers this round=", self.red_agent.followers)
             self.red_agent.followers = 0
-            print("====== NEXT ROUND ======\n")
+            total_follower_loss = 0
             self.blue_agent.energy_level -= 1
+            print("====== NEXT ROUND ======\n")
             
 
 
