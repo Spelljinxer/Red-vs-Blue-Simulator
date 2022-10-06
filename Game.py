@@ -43,7 +43,6 @@ class Game:
         
         new_green_total = green_total - (green_total * gp_as_percent)
         voting_pop = int(new_green_total * (initial_voting/100))
-        # print("voting_pop:", voting_pop)
         for agent_id in range(int(new_green_total)):
             vote_status = False
             uncertainty = round(random.uniform(uncertainty_range[0], uncertainty_range[1]), 1)
@@ -69,31 +68,35 @@ class Game:
             pass
         #neighbor agent wins so update green agent
         elif(green_agent.uncertainty > neighbor_node.uncertainty):
-            new_uncertainty = abs(green_agent.uncertainty - neighbor_node.uncertainty) / 2
+            new_uncertainty = abs(green_agent.uncertainty - neighbor_node.uncertainty) * 0.125
             green_agent.vote_status = neighbor_node.vote_status
             green_agent.uncertainty -= new_uncertainty
-            green_agent.uncertainty = round(green_agent.uncertainty, 1)
+            green_agent.uncertainty = round(green_agent.uncertainty, 2)
             pass
         #green agent wins so update neighbor node
         elif(green_agent.uncertainty < neighbor_node.uncertainty):
-            new_uncertainty = abs(neighbor_node.uncertainty - green_agent.uncertainty) / 2
+            new_uncertainty = abs(neighbor_node.uncertainty - green_agent.uncertainty) * 0.125
             neighbor_node.vote_status = green_agent.vote_status
             neighbor_node.uncertainty -= new_uncertainty
-            neighbor_node.uncertainty = round(neighbor_node.uncertainty, 1)
+            neighbor_node.uncertainty = round(neighbor_node.uncertainty, 2)
             pass
 
     def execute(self):
+        #Every round...
         while self.blue_agent.energy_level != 0:
-            
-            
             total_voting = 0
-            
+            self.red_agent.new_red_move(self.green_team)
             for green_agent in self.green_team:
-                # print("Green Agent: ", green_agent.unique_id, "|", "connections", green_agent.connections, "|","uncertainty:", green_agent.uncertainty, "|", "vote_status:", green_agent.vote_status)
+                # print("Green Agent: ", green_agent.unique_id, "|", "uncertainty:", green_agent.uncertainty, "|", "vote_status:", green_agent.vote_status)
+                # print("Green Agent :", green_agent.unique_id, "|", "communicate=", green_agent.communicate)
                 if(green_agent.vote_status == True):
                     total_voting += 1
-            
-            print("Total Voting:", total_voting)
+                if(green_agent.communicate == True):
+                    self.red_agent.followers += 1
+
+                
+            # print("Total Voting:", total_voting)
+            # print("Total red followers this round=", self.red_agent.followers)
             green_nodes_visited = []    
             for green_agent in self.green_team:
                 if(green_agent.connections):
@@ -103,25 +106,17 @@ class Game:
                         else:
                             if((green_agent.unique_id, neighbor) not in green_nodes_visited):
                                 green_nodes_visited.append((green_agent.unique_id, neighbor))
-                                
-                                # if(green_agent.uncertainty < self.green_team[neighbor].uncertainty):
-                                #     new_uncertainty = abs(self.green_team[neighbor].uncertainty - green_agent.uncertainty) / 2
-                                #     self.green_team[neighbor].vote_status = green_agent.vote_status
-                                #     self.green_team[neighbor].uncertainty -= new_uncertainty
-                                #     self.green_team[neighbor].uncertainty = round(self.green_team[neighbor].uncertainty, 1)
-                                # else:
-                                #     new_uncertainty = abs(green_agent.uncertainty - self.green_team[neighbor].uncertainty) / 2
-                                #     green_agent.vote_status = self.green_team[neighbor].vote_status
-                                #     green_agent.uncertainty -= new_uncertainty
-                                #     green_agent.uncertainty = round(green_agent.uncertainty, 1)
-
-                                #     pass
-
                                 self.green_interaction(green_agent, self.green_team[neighbor])
 
+            # uncertainty_change, follower_loss = self.red_agent.red_move(self.green_team)
+            # print("uncertainty_change:", uncertainty_change, "|", "follower_loss:", follower_loss)
+
+            #reset the count 
+            self.red_agent.followers = 0
             print("====== NEXT ROUND ======\n")
             self.blue_agent.energy_level -= 1
             
+
 
         print("---------------------")
         #end of game
@@ -175,17 +170,14 @@ if __name__ == "__main__":
     if(confirm != "y"):
         print("Exiting...")
         sys.exit(1)
-    Game = Game(2, uncertainty_range, total_Green, grey_agent_percentage, probability_of_connections, initial_voting, False, False)
-    Game.execute()
-
-    sys.exit(1)
+    
     # user_playing = None
     # red_user = False
     # blue_user = False
-    # playing = input("Do you want to play? (y/n): ")
+    # playing = input("Do you wish to play? (y/n): ")
     # if playing == "y":
     #     user_playing = True
-    #     choice = input("Do you want to play as red or blue? (r/b): ")
+    #     choice = input("Do you wish to play as red or blue? (r/b): ")
     #     if choice == "r":
     #         red_user = True
     #         blue_user = False
@@ -195,6 +187,11 @@ if __name__ == "__main__":
     # else:
     #     print("You have chosen not to play. The AI's will instead play.")
     #     user_playing = False
+    
+    Game = Game(2, uncertainty_range, total_Green, grey_agent_percentage, probability_of_connections, initial_voting, True, False)
+    Game.execute()
+
+    sys.exit(1)
             
     #---------------------THIS IS WHERE WE EXECUTE THE GAME--------------
     # game = Game(10, 50, 10, 100, red_user, blue_user)

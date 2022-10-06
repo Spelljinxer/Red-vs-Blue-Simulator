@@ -80,6 +80,32 @@ class red_agent:
     
         return [uncertainty_change, follower_loss]
 
+    def new_red_move(self, green_team):
+        if(self.user_playing):
+            message_output = []
+            for messages in self.messages:
+                message_output.append(self.messages[messages])
+            
+            print("Available Messages= ", message_output)
+            message = input("Please enter a message(0 - 9): ")
+            if(int(message) > 9 or int(message) < 0):
+                print("Invalid message")
+                self.new_red_move(green_team)
+            else:
+                message_to_send = self.messages[int(message)]
+                
+        else:
+            #this is what the AI's best move will be later
+            message_to_send = random.choice(list(self.messages.values()))
+        
+        print("sending message: ", message_to_send)
+
+        potency, follower_loss, uncertainty_change = self.get_message_potency_follower_loss(message_to_send)
+        print("potency: ", potency, " follower loss: ", follower_loss, " uncertainty change: ", uncertainty_change)
+
+                
+        pass
+
 
 
 
