@@ -85,7 +85,7 @@ class Game:
         #Every round...
         while self.blue_agent.energy_level != 0:
             total_voting = 0
-            self.red_agent.new_red_move(self.green_team)
+            red_message = self.red_agent.send_message()
             for green_agent in self.green_team:
                 # print("Green Agent: ", green_agent.unique_id, "|", "uncertainty:", green_agent.uncertainty, "|", "vote_status:", green_agent.vote_status)
                 # print("Green Agent :", green_agent.unique_id, "|", "communicate=", green_agent.communicate)
@@ -93,6 +93,8 @@ class Game:
                     total_voting += 1
                 if(green_agent.communicate == True):
                     self.red_agent.followers += 1
+                
+                
 
                 
             # print("Total Voting:", total_voting)
