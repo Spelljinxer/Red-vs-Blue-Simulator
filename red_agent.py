@@ -32,23 +32,23 @@ class red_agent:
         follower_loss = 0
         uncertainty_change = 0
         if message == self.messages[0] or message == self.messages[1]:
-            potency = 1
+            potency = 0.2
             follower_loss = 1
             uncertainty_change = 0.04
         elif message == self.messages[2] or message == self.messages[3]:
-            potency = 2
+            potency = 0.4
             follower_loss = 2
             uncertainty_change = 0.08
         elif message == self.messages[4] or message == self.messages[5]:
-            potency = 3
+            potency = 0.6
             follower_loss = 3
             uncertainty_change = 0.12
         elif message == self.messages[6] or message == self.messages[7]:
-            potency = 4
+            potency = 0.8
             follower_loss = 4
             uncertainty_change = 0.16
         elif message == self.messages[8] or message == self.messages[9]:
-            potency = 5
+            potency = 1.0
             follower_loss = 5
             uncertainty_change = 0.2
         return [potency, follower_loss, uncertainty_change]
@@ -86,7 +86,7 @@ class red_agent:
             for messages in self.messages:
                 message_output.append(self.messages[messages])
             
-            print("Available Messages= ", message_output)
+            print("Available Messages=", message_output)
             message = input("Please enter a message(0 - 9): ")
             if(int(message) > 9 or int(message) < 0):
                 print("Invalid message")
@@ -98,12 +98,14 @@ class red_agent:
             #this is what the AI's best move will be later
             message_to_send = random.choice(list(self.messages.values()))
         
-        print("sending message to all greens: ", message_to_send)
+        print("Sending message: ", message_to_send)
         return message_to_send
         
     def new_red_move(self, green_agent, message):
-        pass
-
+        potency, follower_loss, uncertainty_change = self.get_message_potency_follower_loss(message)
+        # print("Potency: ", potency, "Follower Loss: ", follower_loss, "Uncertainty Change: ", uncertainty_change)
+        will_change = self.will_vote_status_change(potency)
+        # print("Will_change", will_change)
                 
         pass
 

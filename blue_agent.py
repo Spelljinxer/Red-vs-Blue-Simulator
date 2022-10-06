@@ -126,3 +126,24 @@ class blue_agent:
 
         #passive buff - need to rethink this later 
         #self.energy_level += (0.01 * self.followers)
+    
+    def send_message(self):
+        if(self.user_playing):
+            message_output = []
+            for messages in self.messages:
+                message_output.append(self.messages[messages])
+            
+            print("Available Messages= ", message_output)
+            message = input("Please enter a message(0 - 9): ")
+            if(int(message) > 9 or int(message) < 0):
+                print("Invalid message")
+                self.new_red_move()
+            else:
+                message_to_send = self.messages[int(message)]
+                
+        else:
+            #this is what the AI's best move will be later
+            message_to_send = random.choice(list(self.messages.values()))
+        
+        print("Sending message: ", message_to_send)
+        return message_to_send
