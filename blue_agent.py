@@ -82,9 +82,7 @@ class blue_agent:
             print("You have chosen: " + output[int(choice) - 1])
     
     def will_vote_status_change(self, certainty):
-        chance = certainty * 100
-        if (random.randint(0, 100) <= chance):
-            return True
+        return random.randint(0, 100) <= certainty * 100
     
     def blue_move(self, green_team, grey_team):
         #if the human is playing as the blue agent
@@ -106,19 +104,15 @@ class blue_agent:
         #Execute the rest of the code if human is not playing as blue agent
         for green_agent in green_team:
             #placeholder until we map the user input/AI choice to this variable 
-            certainty_energyloss_uncertaintychange = self.get_message_certainty_energy_loss(message)
-            certainty = certainty_energyloss_uncertaintychange[0]
-            energy_loss = certainty_energyloss_uncertaintychange[1]
+            certainty, energy_loss, uncertainty_change = self.get_message_certainty_energy_loss(message)
             if (message != self.messages[10]): #if not grey agent
                 self.energy_level -= energy_loss
-            uncertainty_change = certainty_energyloss_uncertaintychange[2]
             #uncertainty chance
             if green_agent.vote_status == False:
                 #blue only wants to improve the certainty of those whose vote status is true, decrease it if false otherwise
                 uncertainty_change = -uncertainty_change
             #opinion change 
-            will_it = self.will_vote_status_change(certainty)
-            if (will_it == True):
+            if (self.will_vote_status_change(certainty)):
                 green_agent.vote_status == True
         return [uncertainty_change, energy_loss]
 
