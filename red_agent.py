@@ -57,18 +57,6 @@ class red_agent:
         return random.randint(0, 100) <= potency * 100
     
     def red_move(self, green_agent, message):
-        # follower_loss_count = 0
-        # for green_agent in green_team:
-        #     if(green_agent.communicate):
-        #         potency, follower_loss, uncertainty_change = self.get_message_potency_follower_loss(message)
-        #         follower_loss_count += follower_loss
-        #         if green_agent.vote_status:
-        #             uncertainty_change = uncertainty_change * -1
-        #         if(self.will_vote_status_change(potency)):
-        #             print("Red agent changed vote status")
-        #             # green_agent.vote_status = False
-    
-        # return uncertainty_change, follower_loss
         follower_loss_count = 0
         uncertainty_change = 0.0
         if(green_agent.communicate):
