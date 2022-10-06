@@ -61,39 +61,43 @@ class red_agent:
             print("You have chosen: " + output[int(choice) - 1])
 
     def will_vote_status_change(self, potency):
-        chance = potency * 100
-        if (random.randint(0, 100) <= chance):
-            return True
+         return random.randint(0, 100) <= potency * 100
     
-    def red_move(self, green_team):
+    def red_move(self, green_team, message):
         follower_loss_count = 0
-        if (self.user_playing):
-            output = []
-            for i in range(3):
-                message = random.choice(list(self.massages.values()))
-                if message not in output:
-                    output.append(message)
-                choice = input("Choose a message to send: (1-3): " + str(output) + "\n")
-                self.valid_move(output, choice, green_team)
-        
-        if green_team.communicate == True:
-            for green_agent in green_team.agents:
-                #placeholder until we map the user input/AI choice to this variable 
-                potency_followerloss_uncertaintychange = self.get_message_potency_follower_loss(message)
-                potency = potency_followerloss_uncertaintychange[0]
-                follower_loss = potency_followerloss_uncertaintychange[1]
+        follower_loss_count = 0
+        for green_agent in green_team:
+            if(green_agent.communicate):
+                potency, follower_loss, uncertainty_change = self.get_message_potency_follower_loss(message)
                 follower_loss_count += follower_loss
-                uncertainty_change = potency_followerloss_uncertaintychange[2]
-                #uncertainty change 
-                if green_agent.vote_status == True:
+                if green_agent.vote_status:
                     uncertainty_change = -uncertainty_change
-                    #red only wants to improve the certainty of those whose vote status is false, decrease otherwise 
-                #opinion change
-                will_it = self.will_vote_status_change(potency)
-                if (will_it == True):
+                if(self.will_vote_status_change(potency)):
                     green_agent.vote_status = False
     
         return [uncertainty_change, follower_loss]
+    
+    def send_message(self):
+        if(self.user_playing):
+            message_output = []
+            for messages in self.messages:
+                message_output.append(self.messages[messages])
+            
+            print("Available Messages=", message_output)
+            message = input("Please enter a message(0 - 9): ")
+            if(int(message) > 9 or int(message) < 0):
+                print("Invalid message")
+                self.send_message()
+            else:
+                message_to_send = self.messages[int(message)]
+                
+        else:
+            #this is what the AI's best move will be later
+            message_to_send = random.choice(list(self.messages.values()))
+        
+        print("Sending message: ", message_to_send)
+        return message_to_send
+    
 
 
 
