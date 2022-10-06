@@ -33,53 +33,44 @@ class red_agent:
         uncertainty_change = 0
         if message == self.messages[0] or message == self.messages[1]:
             potency = 0.2
-            follower_loss = 1
+            follower_loss = 0.02
             uncertainty_change = 0.04
         elif message == self.messages[2] or message == self.messages[3]:
             potency = 0.4
-            follower_loss = 2
+            follower_loss = 0.04
             uncertainty_change = 0.08
         elif message == self.messages[4] or message == self.messages[5]:
             potency = 0.6
-            follower_loss = 3
+            follower_loss = 0.06
             uncertainty_change = 0.12
         elif message == self.messages[6] or message == self.messages[7]:
             potency = 0.8
-            follower_loss = 4
+            follower_loss = 0.08
             uncertainty_change = 0.16
         elif message == self.messages[8] or message == self.messages[9]:
             potency = 1.0
-            follower_loss = 5
+            follower_loss = 0.1
             uncertainty_change = 0.2
         return [potency, follower_loss, uncertainty_change]
 
     def will_vote_status_change(self, potency):
         return random.randint(0, 100) <= potency * 100
     
-    def red_move(self, green_team):
+    def red_move(self, green_team, message):
         follower_loss_count = 0
         for green_agent in green_team:
             if(green_agent.communicate):
-                #placeholder until we map the user input/AI choice to this variable 
-                message = "Had to run a boy down in my Air Force. Pissed, cah now they got a crease in the middle"
-                potency_followerloss_uncertaintychange = self.get_message_potency_follower_loss(message)
-                potency = potency_followerloss_uncertaintychange[0]
-                follower_loss = potency_followerloss_uncertaintychange[1]
+                potency, follower_loss, uncertainty_change = self.get_message_potency_follower_loss(message)
                 follower_loss_count += follower_loss
-                uncertainty_change = potency_followerloss_uncertaintychange[2]
                 if green_agent.vote_status:
-                    uncertainty_change = -uncertainty_change
-                    #since agents should not know uncertainty, how do we handle this? return a dictionary with key as green_agent id and 
-                    # value as appropriate change of uncertainty change?
-                    #red only wants to improve the certainty of those whose vote status is false, decrease otherwise 
-                #opinion change
-                will_it = self.will_vote_status_change(potency)
-                if (will_it):
+                    uncertainty_change = uncertainty_change * -1
+                if(self.will_vote_status_change(potency)):
                     green_agent.vote_status = False
     
-        return [uncertainty_change, follower_loss]
+        return uncertainty_change, follower_loss
 
     def send_message(self):
+        message_to_send = ""
         if(self.user_playing):
             message_output = []
             for messages in self.messages:
@@ -89,7 +80,7 @@ class red_agent:
             message = input("Please enter a message(0 - 9): ")
             if(int(message) > 9 or int(message) < 0):
                 print("Invalid message")
-                self.new_red_move()
+                self.send_message()
             else:
                 message_to_send = self.messages[int(message)]
                 
@@ -100,21 +91,6 @@ class red_agent:
         print("Sending message: ", message_to_send)
         return message_to_send
         
-    def new_red_move(self, green_agent, message):
-        potency, follower_loss, uncertainty_change = self.get_message_potency_follower_loss(message)
-        # print("Potency: ", potency, "Follower Loss: ", follower_loss, "Uncertainty Change: ", uncertainty_change)
-        
-        #red agent can only talk to it's followers
-        if(green_agent.communicate):
-            if(green_agent.vote_status):
-                #TODO: change uncertainty appropriately
-                uncertainty_change = abs(green_agent.uncertainty - uncertainty_change) * 0.125
-
-                
-            
-        return (uncertainty_change, follower_loss)
-        pass
-
 
 
 
