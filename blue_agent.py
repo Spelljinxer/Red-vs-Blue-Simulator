@@ -84,22 +84,17 @@ class blue_agent:
             print("You have chosen: " + output[int(choice) - 1])
     
     def will_vote_status_change(self, certainty):
-        return random.randint(0, 100) <= certainty * 100
+        return random.randint(0, 50) <= certainty * 100
 
-    def blue_move(self, green_team, grey_team, message):
-
-        for green_agent in green_team:
-            certainty, energy_loss, uncertainty_change = self.get_message_certainty_energy_loss(message)
-            if (message != self.messages[10]): #if not grey agent
-                self.energy_level -= energy_loss
-            if green_agent.vote_status == False:
-        
-                uncertainty_change = -uncertainty_change
-            if(self.will_vote_status_change(certainty)):
-                green_agent.vote_status == True
+    def blue_move(self, green_agent, message):
+        certainty, energy_loss, uncertainty_change = self.get_message_certainty_energy_loss(message)
+        if (message != self.messages[10]): #if not grey agent
+            self.energy_level -= energy_loss
+        if(green_agent.vote_status == False):
+            uncertainty_change *= -1
+        if(self.will_vote_status_change(certainty)):
+            green_agent.vote_status = True
         return uncertainty_change, energy_loss
-
-        #passive buff - need to rethink this later 
         #self.energy_level += (0.01 * self.followers)
     
     def send_message(self):
