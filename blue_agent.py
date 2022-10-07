@@ -20,7 +20,7 @@ class blue_agent:
         10: "summon grey agent",
     }
     followers = None
-    energy_level = 20
+    energy_level = 100
     grey_agent_num = 0
     def __init__(self, user_playing):
         self.followers = 0
@@ -34,48 +34,48 @@ class blue_agent:
             pass
         elif message == self.messages[0]:
             certainty = 0.1
-            energy_loss = 0.005
+            energy_loss = 0.05
             uncertainty_change = 0.02
         elif message == self.messages[1]:
             certainty = 0.2
-            energy_loss = 0.01
+            energy_loss = 0.1
             uncertainty_change = 0.04
         elif message == self.messages[2]:
             certainty = 0.3
-            energy_loss = 0.015
+            energy_loss = 0.15
             uncertainty_change = 0.06
         elif message == self.messages[3]:
             certainty = 0.4
-            energy_loss = 0.02
+            energy_loss = 0.2
             uncertainty_change = 0.08
         elif message == self.messages[4]:
             certainty = 0.5
-            energy_loss = 0.025
+            energy_loss = 0.25
             uncertainty_change = 0.10
         elif message == self.messages[5]:
             certainty = 0.6
-            energy_loss = 0.03
+            energy_loss = 0.3
             uncertainty_change = 0.12
         elif message == self.messages[6]:
             certainty = 0.7
-            energy_loss = 0.035
+            energy_loss = 0.35
             uncertainty_change = 0.14
         elif message == self.messages[7]:
             certainty = 0.8
-            energy_loss = 0.04
+            energy_loss = 0.4
             uncertainty_change = 0.16
         elif message == self.messages[8]:
             certainty = 0.9
-            energy_loss = 0.045
+            energy_loss = 0.45
             uncertainty_change = 0.18
         elif message == self.messages[9]:
             certainty = 1.0
-            energy_loss = 0.05
+            energy_loss = 0.5
             uncertainty_change = 0.2
         return [certainty, energy_loss, uncertainty_change]                                                        
     
     def will_vote_status_change(self, certainty):
-        return random.randint(0, 50) <= certainty * 100
+        return random.randint(0, 75) <= certainty * 100
 
     def blue_move(self, green_agent, message):
         certainty, energy_loss, uncertainty_change = self.get_message_certainty_energy_loss(message)
@@ -92,8 +92,6 @@ class blue_agent:
         message_to_send = ""
         message_output = []
         if(self.user_playing):
-            
-            #only append messages 1-9 from the dictionary
             for i in range(10):
                 message_output.append(self.messages[i])
             message = ""
