@@ -98,6 +98,7 @@ class Game:
         while self.blue_agent.energy_level > 0:
             if(self.blue_agent.energy_level <= 0):
                 break
+            print("Starting Blue Energy: ", self.blue_agent.energy_level)
             total_voting = 0
             
             red_message = self.red_agent.send_message()
@@ -165,14 +166,13 @@ class Game:
             # for green_agent in self.green_team:
             #     print("Green Agent: ", green_agent.unique_id, "vote_status: ", green_agent.vote_status, "uncertainty: ", green_agent.uncertainty)
             print("----------------------------------")
-            print("Total Population:", len(self.green_team))
-            print("Total Voting Population: ", total_voting)
-            print("Total Red Followers:", self.red_agent.followers)
+            # print("Total Population:", len(self.green_team))
+            # print("Total Voting Population: ", total_voting)
+            # print("Total Red Followers:", self.red_agent.followers)
             #reset the count 
             self.red_agent.followers = 0
             total_follower_loss = 0
-            self.blue_agent.energy_level -= total_energy_loss
-            total_energy_loss = 0
+            self.blue_agent.energy_level - total_energy_loss
             print("Blue Energy Level: ", self.blue_agent.energy_level)
             print("----------------------------------")
             print("====== NEXT ROUND ======\n")

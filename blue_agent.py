@@ -75,7 +75,7 @@ class blue_agent:
         return [certainty, energy_loss, uncertainty_change]                                                        
     
     def will_vote_status_change(self, certainty):
-        return random.randint(0, 50) <= certainty * 100
+        return random.randint(0, 75) <= certainty * 100
 
     def blue_move(self, green_agent, message):
         certainty, energy_loss, uncertainty_change = self.get_message_certainty_energy_loss(message)
