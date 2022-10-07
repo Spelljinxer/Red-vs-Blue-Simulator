@@ -6,7 +6,6 @@ Game Class to Execute the Game
 
 saving this here: python Game.py -ge 100 -gp 5 -gr 10 -u 0.0,1.0 -p 50
 """
-from itertools import count
 import red_agent
 import blue_agent
 import green_agent
