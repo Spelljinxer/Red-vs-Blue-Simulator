@@ -76,7 +76,6 @@ class red_agent:
             message_output = []
             for messages in self.messages:
                 message_output.append(self.messages[messages])
-            print("length of message output: ", len(message_output))
             print("Available Messages=", message_output)
             message = input("Please enter a message(0 - 9): ")
             try:

@@ -99,10 +99,10 @@ class Game:
             if(self.blue_agent.energy_level <= 0):
                 break
             total_voting = 0
+            
             red_message = self.red_agent.send_message()
             total_follower_loss = 0
             for green_agent in self.green_team:
-                # print("BEFORE RED|Green Agent: ", green_agent.unique_id, "|", "vote_status: ", green_agent.vote_status, "|",  "uncertainty: ", green_agent.uncertainty)
                 if(green_agent.vote_status):
                     total_voting += 1
                 if(green_agent.communicate):
@@ -111,12 +111,6 @@ class Game:
                 red_uncertainty_change, follower_loss = self.red_agent.red_move(green_agent, red_message)
                 total_follower_loss += follower_loss
                 self.change_green_uncertainty(green_agent.uncertainty, red_uncertainty_change)
-                # green_agent.uncertainty += red_uncertainty_change
-                # if(green_agent.uncertainty > self.upper_limit):
-                #     green_agent.uncertainty = self.upper_limit
-                # elif(green_agent.uncertainty < self.lower_limit):
-                #     green_agent.uncertainty = self.lower_limit
-                # print("AFTER RED|Green Agent: ", green_agent.unique_id, "vote_status: ", green_agent.vote_status, "uncertainty: ", green_agent.uncertainty)
             
             total_energy_loss = 0
             blue_message = self.blue_agent.send_message()
@@ -142,16 +136,8 @@ class Game:
             else:
                 for green_agent in self.green_team:
                     uncertainty_change, energy_loss = self.blue_agent.blue_move(green_agent, blue_message)
-                    # print("uncertainty_change: ", uncertainty_change)
                     total_energy_loss += energy_loss
                     self.change_green_uncertainty(green_agent.uncertainty, uncertainty_change)
-                    # green_agent.uncertainty += uncertainty_change
-                    # if(green_agent.uncertainty > self.upper_limit):
-                    #     green_agent.uncertainty = self.upper_limit
-                    # elif(green_agent.uncertainty < self.lower_limit):
-                    #     green_agent.uncertainty = self.lower_limit
-                
-        
 
             print("energy loss this round: ", total_energy_loss)
             #cutoff communication after follower loss
@@ -175,10 +161,10 @@ class Game:
                                 green_nodes_visited.append((green_agent.unique_id, neighbor))
                                 self.green_interaction(green_agent, self.green_team[neighbor])
 
-                # print("Green Agent: ", green_agent.unique_id, "|", "vote_status: ", green_agent.vote_status, "|",  "uncertainty: ", green_agent.uncertainty)
-            print("Status of Green Agents")
-            for green_agent in self.green_team:
-                print("Green Agent: ", green_agent.unique_id, "vote_status: ", green_agent.vote_status, "uncertainty: ", green_agent.uncertainty)
+            # print("Status of Green Agents")
+            # for green_agent in self.green_team:
+            #     print("Green Agent: ", green_agent.unique_id, "vote_status: ", green_agent.vote_status, "uncertainty: ", green_agent.uncertainty)
+            print("----------------------------------")
             print("Total Population:", len(self.green_team))
             print("Total Voting Population: ", total_voting)
             print("Total Red Followers:", self.red_agent.followers)
@@ -186,12 +172,14 @@ class Game:
             self.red_agent.followers = 0
             total_follower_loss = 0
             self.blue_agent.energy_level -= total_energy_loss
+            total_energy_loss = 0
             print("Blue Energy Level: ", self.blue_agent.energy_level)
+            print("----------------------------------")
             print("====== NEXT ROUND ======\n")
             
-        print("---------------------")
+        print("----------------------------------")
         #end of game
-        print("The election is over!\n")
+        print("Blue has run out of energy!\n")
         pass
 
 
@@ -242,29 +230,23 @@ if __name__ == "__main__":
         print("Exiting...")
         sys.exit(1)
     
-    # user_playing = None
-    # red_user = False
-    # blue_user = False
-    # playing = input("Do you wish to play? (y/n): ")
-    # if playing == "y":
-    #     user_playing = True
-    #     choice = input("Do you wish to play as red or blue? (r/b): ")
-    #     if choice == "r":
-    #         red_user = True
-    #         blue_user = False
-    #     elif choice == "b":
-    #         red_user = False
-    #         blue_user = True
-    # else:
-    #     print("You have chosen not to play. The AI's will instead play.")
-    #     user_playing = False
+    red_user = False
+    blue_user = False
+    playing = input("Do you wish to play? (y/n): ")
+    if playing == "y":
+        choice = input("Do you wish to play as red or blue? (r/b): ")
+        if choice == "r":
+            red_user = True
+        elif choice == "b":
+            blue_user = True
+    else:
+        print("You have chosen not to play. The AI's will instead play.")
     
-    Game = Game(uncertainty_range, total_Green, grey_agent_percentage, probability_of_connections, initial_voting, True, False)
+    Game = Game(uncertainty_range, total_Green, grey_agent_percentage, probability_of_connections, initial_voting, red_user, blue_user)
     Game.execute()
 
     sys.exit(1)
-            
-    #---------------------THIS IS WHERE WE EXECUTE THE GAME--------------
+    #---------------------igraph???--------------
     # game = Game(10, 50, 10, 100, red_user, blue_user)
     # '''
     # Don't delete this, this is how we generate a graph
