@@ -88,8 +88,9 @@ class Game:
 
     def execute(self):
         #Every round...
-        while self.blue_agent.energy_level != 0:
-
+        while self.blue_agent.energy_level > 0:
+            if(self.blue_agent.energy_level <= 0):
+                break
             total_voting = 0
             red_message = self.red_agent.send_message()
             total_follower_loss = 0
@@ -108,17 +109,30 @@ class Game:
                 elif(green_agent.uncertainty < self.lower_limit):
                     green_agent.uncertainty = self.lower_limit
                 # print("AFTER RED|Green Agent: ", green_agent.unique_id, "vote_status: ", green_agent.vote_status, "uncertainty: ", green_agent.uncertainty)
-
+            
+            total_energy_loss = 0
             blue_message = self.blue_agent.send_message()
+            for green_agent in self.green_team:
+                uncertainty_change, energy_loss = self.blue_agent.blue_move(green_agent, blue_message)
+                # print("uncertainty_change: ", uncertainty_change)
+                total_energy_loss += energy_loss
+                green_agent.uncertainty += uncertainty_change
+                if(green_agent.uncertainty > self.upper_limit):
+                    green_agent.uncertainty = self.upper_limit
+                elif(green_agent.uncertainty < self.lower_limit):
+                    green_agent.uncertainty = self.lower_limit
+            
+            print("energy loss this round: ", total_energy_loss)
 
-
+            #cutoff communication after follower loss
             index = 0
             while(index < round(total_follower_loss)):
-                green_agent_stop = random.choice(self.green_team)
-                if(green_agent_stop.communicate):
-                    green_agent_stop.communicate = False
+                green_agent = random.choice(self.green_team)
+                if(green_agent.communicate):
+                    green_agent.communicate = False
                     self.red_agent.followers -= 1
                     index += 1
+
             #green interaction with each other per round
             green_nodes_visited = []    
             for green_agent in self.green_team:
@@ -132,17 +146,18 @@ class Game:
                                 self.green_interaction(green_agent, self.green_team[neighbor])
 
                 # print("Green Agent: ", green_agent.unique_id, "|", "vote_status: ", green_agent.vote_status, "|",  "uncertainty: ", green_agent.uncertainty)
-            
+            print("Status of Green Agents")
+            for green_agent in self.green_team:
+                print("Green Agent: ", green_agent.unique_id, "vote_status: ", green_agent.vote_status, "uncertainty: ", green_agent.uncertainty)
             print("Total Voting Population: ", total_voting)
             print("Total Red Followers", self.red_agent.followers)
             #reset the count 
             self.red_agent.followers = 0
             total_follower_loss = 0
-            self.blue_agent.energy_level -= 1
+            self.blue_agent.energy_level -= total_energy_loss
+            print("Blue Energy Level: ", self.blue_agent.energy_level)
             print("====== NEXT ROUND ======\n")
             
-
-
         print("---------------------")
         #end of game
         print("The election is over!\n")

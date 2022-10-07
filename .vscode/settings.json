@@ -1,5 +1,6 @@
 {
     "files.associations": {
         "stdlib.h": "c"
-    }
+    },
+    "discord.detailsDebugging": "Debugging {file_name} In {workspace_folder}"
 }
