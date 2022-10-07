@@ -166,9 +166,9 @@ class Game:
             # for green_agent in self.green_team:
             #     print("Green Agent: ", green_agent.unique_id, "vote_status: ", green_agent.vote_status, "uncertainty: ", green_agent.uncertainty)
             print("----------------------------------")
-            # print("Total Population:", len(self.green_team))
-            # print("Total Voting Population: ", total_voting)
-            # print("Total Red Followers:", self.red_agent.followers)
+            print("Total Population:", len(self.green_team))
+            print("Total Voting Population: ", total_voting)
+            print("Total Red Followers:", self.red_agent.followers)
             #reset the count 
             self.red_agent.followers = 0
             total_follower_loss = 0
@@ -180,6 +180,15 @@ class Game:
         print("----------------------------------")
         #end of game
         print("Blue has run out of energy!\n")
+        vote_count = 0
+        for green_agent in self.green_team:
+            if(green_agent.vote_status):
+                vote_count += 1
+        
+        if(vote_count > len(self.green_team)/2):
+            print("The Winner is Blue!!!")
+        else:
+            print("The Winner is RED!!!")
         pass
 
 
