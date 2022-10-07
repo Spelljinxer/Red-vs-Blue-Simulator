@@ -5,7 +5,6 @@ Blue Agent
     Nathan Eden  | 22960674      
 """
 import random
-import sys
 class blue_agent:
     messages = {
         0: "msg 1",
@@ -32,8 +31,7 @@ class blue_agent:
         energy_loss = 0.0
         uncertainty_change = 0.0
         if message == self.messages[10]:
-            #idk yet
-            return True
+            pass
         elif message == self.messages[0]:
             certainty = 0.1
             energy_loss = 0.005
@@ -75,13 +73,6 @@ class blue_agent:
             energy_loss = 0.05
             uncertainty_change = 0.2
         return [certainty, energy_loss, uncertainty_change]                                                        
-
-    def valid_move(self, output, choice, green_team, grey_team):
-        if(int(choice) > len(output) or int(choice) < 1):
-            print("Invalid move. Moves have been randomised again.")
-            self.blue_move(green_team, grey_team)
-        else:
-            print("You have chosen: " + output[int(choice) - 1])
     
     def will_vote_status_change(self, certainty):
         return random.randint(0, 50) <= certainty * 100
@@ -99,8 +90,9 @@ class blue_agent:
     
     def send_message(self):
         message_to_send = ""
+        message_output = []
         if(self.user_playing):
-            message_output = []
+            
             #only append messages 1-9 from the dictionary
             for i in range(10):
                 message_output.append(self.messages[i])
@@ -125,8 +117,13 @@ class blue_agent:
                 self.send_message()
         
         else:
-            #this is what the AI's best move will be later
-            message_to_send = random.choice(list(self.messages.values()))
+            #replace with AI move later
+            for i in range(10):
+                message_output.append(self.messages[i])
+            if(self.grey_agent_num > 0):
+                message_output.append(self.messages[10])        
+            message_to_send = random.choice(message_output)
+
         
         print("Blue Sending message: ", message_to_send)
         return message_to_send
