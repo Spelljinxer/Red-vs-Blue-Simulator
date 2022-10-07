@@ -5,22 +5,24 @@ Blue Agent
     Nathan Eden  | 22960674      
 """
 import random
+import sys
 class blue_agent:
     messages = {
-        0: "message 1",
-        1: "message 2",
-        2: "message 3",
-        3: "message 4",
-        4: "message 5",
-        5: "message 6",
-        6: "message 7",
-        7: "message 8",
-        8: "message 9",
-        9: "message 10",
+        0: "msg 1",
+        1: "msg 2",
+        2: "msg 3",
+        3: "msg 4",
+        4: "msg 5",
+        5: "msg 6",
+        6: "msg 7",
+        7: "msg 8",
+        8: "msg 9",
+        9: "msg 10",
         10: "summon grey agent",
     }
     followers = None
     energy_level = 20
+    grey_agent_num = 0
     def __init__(self, user_playing):
         self.followers = 0
         self.user_playing = user_playing
@@ -82,66 +84,54 @@ class blue_agent:
             print("You have chosen: " + output[int(choice) - 1])
     
     def will_vote_status_change(self, certainty):
-        chance = certainty * 100
-        if (random.randint(0, 100) <= chance):
-            return True
-    
-    def blue_move(self, green_team, grey_team):
-        #if the human is playing as the blue agent
-        if (self.user_playing):
-            output = [] 
-            for i in range(3):
-                # TODO make this UNIQUE
-                message = random.choice(list(self.messages.values()))
-                if message not in output:
-                    output.append(message)
-            if(self.messages[10] not in output):
-                output.append(self.messages[10])  
-                choice = input("Choose a message to send (1-4): " + str(output) +"\n")
-                self.valid_move(output, choice, green_team, grey_team)
-            else:
-                choice = input("Choose a message to send (1-3): " + str(output) +"\n")
-                self.valid_move(output, choice, green_team, grey_team)
-        
-        #Execute the rest of the code if human is not playing as blue agent
+        return random.randint(0, 100) <= certainty * 100
+
+    def blue_move(self, green_team, grey_team, message):
+
         for green_agent in green_team:
-            #placeholder until we map the user input/AI choice to this variable 
-            certainty_energyloss_uncertaintychange = self.get_message_certainty_energy_loss(message)
-            certainty = certainty_energyloss_uncertaintychange[0]
-            energy_loss = certainty_energyloss_uncertaintychange[1]
+            certainty, energy_loss, uncertainty_change = self.get_message_certainty_energy_loss(message)
             if (message != self.messages[10]): #if not grey agent
                 self.energy_level -= energy_loss
-            uncertainty_change = certainty_energyloss_uncertaintychange[2]
-            #uncertainty chance
             if green_agent.vote_status == False:
-                #blue only wants to improve the certainty of those whose vote status is true, decrease it if false otherwise
+        
                 uncertainty_change = -uncertainty_change
-            #opinion change 
-            will_it = self.will_vote_status_change(certainty)
-            if (will_it == True):
+            if(self.will_vote_status_change(certainty)):
                 green_agent.vote_status == True
-        return [uncertainty_change, energy_loss]
+        return uncertainty_change, energy_loss
 
         #passive buff - need to rethink this later 
         #self.energy_level += (0.01 * self.followers)
     
     def send_message(self):
+        message_to_send = ""
         if(self.user_playing):
             message_output = []
-            for messages in self.messages:
-                message_output.append(self.messages[messages])
-            
-            print("Available Messages= ", message_output)
-            message = input("Please enter a message(0 - 9): ")
-            if(int(message) > 9 or int(message) < 0):
-                print("Invalid message")
-                self.new_red_move()
+            #only append messages 1-9 from the dictionary
+            for i in range(10):
+                message_output.append(self.messages[i])
+            message = ""
+            if(self.grey_agent_num > 0):
+                message_output.append(self.messages[10])
+                print("Available Messages= ", message_output)
+                message = input("Please enter a message(0 - 10): ")
             else:
-                message_to_send = self.messages[int(message)]
-                
+                print("Available Messages= ", message_output)
+                message = input("Please enter a message(0 - 9): ")
+            
+            try:
+                message_to_send = message_output[int(message)]
+            except:
+                print("Invalid Move. Please Send Another Message.")
+                message_to_send = ""
+                self.send_message()
+            if(int(message) < 0):
+                print("Invalid Move. Please Send Another Message.")
+                message_to_send = ""
+                self.send_message()
+        
         else:
             #this is what the AI's best move will be later
             message_to_send = random.choice(list(self.messages.values()))
         
-        print("Sending message: ", message_to_send)
+        print("Blue Sending message: ", message_to_send)
         return message_to_send
