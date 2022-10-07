@@ -85,6 +85,13 @@ class Game:
             neighbor_node.uncertainty -= new_uncertainty
             neighbor_node.uncertainty = round(neighbor_node.uncertainty, 2)
             pass
+        
+    def change_green_uncertainty(self, green_agent_uncertainty, uncertainty_change):
+        green_agent_uncertainty += uncertainty_change
+        if green_agent_uncertainty > self.upper_limit:
+            green_agent_uncertainty = self.upper_limit
+        elif green_agent_uncertainty < self.lower_limit:
+            green_agent_uncertainty = self.lower_limit
 
     def execute(self):
         #Every round...
@@ -103,27 +110,50 @@ class Game:
                 
                 red_uncertainty_change, follower_loss = self.red_agent.red_move(green_agent, red_message)
                 total_follower_loss += follower_loss
-                green_agent.uncertainty += red_uncertainty_change
-                if(green_agent.uncertainty > self.upper_limit):
-                    green_agent.uncertainty = self.upper_limit
-                elif(green_agent.uncertainty < self.lower_limit):
-                    green_agent.uncertainty = self.lower_limit
+                self.change_green_uncertainty(green_agent.uncertainty, red_uncertainty_change)
+                # green_agent.uncertainty += red_uncertainty_change
+                # if(green_agent.uncertainty > self.upper_limit):
+                #     green_agent.uncertainty = self.upper_limit
+                # elif(green_agent.uncertainty < self.lower_limit):
+                #     green_agent.uncertainty = self.lower_limit
                 # print("AFTER RED|Green Agent: ", green_agent.unique_id, "vote_status: ", green_agent.vote_status, "uncertainty: ", green_agent.uncertainty)
             
             total_energy_loss = 0
             blue_message = self.blue_agent.send_message()
-            for green_agent in self.green_team:
-                uncertainty_change, energy_loss = self.blue_agent.blue_move(green_agent, blue_message)
-                # print("uncertainty_change: ", uncertainty_change)
-                total_energy_loss += energy_loss
-                green_agent.uncertainty += uncertainty_change
-                if(green_agent.uncertainty > self.upper_limit):
-                    green_agent.uncertainty = self.upper_limit
-                elif(green_agent.uncertainty < self.lower_limit):
-                    green_agent.uncertainty = self.lower_limit
-            
-            print("energy loss this round: ", total_energy_loss)
+            if(blue_message == "summon grey agent"):
+                grey_agent = random.choice(self.grey_team)
+                print("Grey Agent: ", grey_agent.unique_id, "has been summoned!", "Team: ", grey_agent.team)
+                grey_message = grey_agent.grey_message(grey_agent.team)
 
+                uncertainty_change = 0.0
+                for green_agent in self.green_team:
+                    
+                    if(grey_agent.team == "Red"):
+                        uncertainty_change = grey_agent.red_move(green_agent,grey_message)
+                    else:
+                        uncertainty_change = grey_agent.blue_move(green_agent ,grey_message)
+                    
+                    self.change_green_uncertainty(green_agent.uncertainty, uncertainty_change)
+
+                self.grey_team.remove(grey_agent)
+                self.blue_agent.grey_agent_num -= 1
+            
+            
+            else:
+                for green_agent in self.green_team:
+                    uncertainty_change, energy_loss = self.blue_agent.blue_move(green_agent, blue_message)
+                    # print("uncertainty_change: ", uncertainty_change)
+                    total_energy_loss += energy_loss
+                    self.change_green_uncertainty(green_agent.uncertainty, uncertainty_change)
+                    # green_agent.uncertainty += uncertainty_change
+                    # if(green_agent.uncertainty > self.upper_limit):
+                    #     green_agent.uncertainty = self.upper_limit
+                    # elif(green_agent.uncertainty < self.lower_limit):
+                    #     green_agent.uncertainty = self.lower_limit
+                
+        
+
+            print("energy loss this round: ", total_energy_loss)
             #cutoff communication after follower loss
             index = 0
             while(index < round(total_follower_loss)):
@@ -149,8 +179,9 @@ class Game:
             print("Status of Green Agents")
             for green_agent in self.green_team:
                 print("Green Agent: ", green_agent.unique_id, "vote_status: ", green_agent.vote_status, "uncertainty: ", green_agent.uncertainty)
+            print("Total Population:", len(self.green_team))
             print("Total Voting Population: ", total_voting)
-            print("Total Red Followers", self.red_agent.followers)
+            print("Total Red Followers:", self.red_agent.followers)
             #reset the count 
             self.red_agent.followers = 0
             total_follower_loss = 0
@@ -228,7 +259,7 @@ if __name__ == "__main__":
     #     print("You have chosen not to play. The AI's will instead play.")
     #     user_playing = False
     
-    Game = Game(uncertainty_range, total_Green, grey_agent_percentage, probability_of_connections, initial_voting, False, True)
+    Game = Game(uncertainty_range, total_Green, grey_agent_percentage, probability_of_connections, initial_voting, True, False)
     Game.execute()
 
     sys.exit(1)
