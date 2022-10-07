@@ -41,6 +41,7 @@ class Game:
         if(blue_user):
             print("You are the blue agent!")
         for agent_id in range(int(gp_as_percent * green_total)):
+            self.blue_agent.grey_agent_num += 1
             if random.random() < 0.5:
                 self.grey_team.append(grey_agent.grey_agent("Red", agent_id))
             else:
@@ -107,6 +108,10 @@ class Game:
                 elif(green_agent.uncertainty < self.lower_limit):
                     green_agent.uncertainty = self.lower_limit
                 # print("AFTER RED|Green Agent: ", green_agent.unique_id, "vote_status: ", green_agent.vote_status, "uncertainty: ", green_agent.uncertainty)
+
+            blue_message = self.blue_agent.send_message()
+
+
             index = 0
             while(index < round(total_follower_loss)):
                 green_agent_stop = random.choice(self.green_team)
@@ -126,7 +131,7 @@ class Game:
                                 green_nodes_visited.append((green_agent.unique_id, neighbor))
                                 self.green_interaction(green_agent, self.green_team[neighbor])
 
-                print("Green Agent: ", green_agent.unique_id, "|", "vote_status: ", green_agent.vote_status, "|",  "uncertainty: ", green_agent.uncertainty)
+                # print("Green Agent: ", green_agent.unique_id, "|", "vote_status: ", green_agent.vote_status, "|",  "uncertainty: ", green_agent.uncertainty)
             
             print("Total Voting Population: ", total_voting)
             print("Total Red Followers", self.red_agent.followers)
@@ -208,7 +213,7 @@ if __name__ == "__main__":
     #     print("You have chosen not to play. The AI's will instead play.")
     #     user_playing = False
     
-    Game = Game(uncertainty_range, total_Green, grey_agent_percentage, probability_of_connections, initial_voting, True, False)
+    Game = Game(uncertainty_range, total_Green, grey_agent_percentage, probability_of_connections, initial_voting, False, True)
     Game.execute()
 
     sys.exit(1)

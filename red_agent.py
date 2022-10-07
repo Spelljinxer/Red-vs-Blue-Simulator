@@ -77,20 +77,20 @@ class red_agent:
             message_output = []
             for messages in self.messages:
                 message_output.append(self.messages[messages])
-            
+            print("length of message output: ", len(message_output))
             print("Available Messages=", message_output)
             message = input("Please enter a message(0 - 9): ")
-            if(int(message) > 9 or int(message) < 0):
-                print("Invalid message")
+            try:
+                message_to_send = message_output[int(message)]
+            except:
+                print("Invalid Move. Please Send Another Message.")
                 self.send_message()
-            else:
-                message_to_send = self.messages[int(message)]
                 
         else:
             #this is what the AI's best move will be later
             message_to_send = random.choice(list(self.messages.values()))
         
-        print("Sending message: ", message_to_send)
+        print("Red Sending message: ", message_to_send)
         return message_to_send
         
 
