@@ -81,7 +81,7 @@ class blue_agent:
         certainty, energy_loss, uncertainty_change = self.get_message_certainty_energy_loss(message)
         if (message != self.messages[10]): #if not grey agent
             self.energy_level -= energy_loss
-        if(green_agent.vote_status == False):
+        if(green_agent.vote_status):
             uncertainty_change *= -1
         if(self.will_vote_status_change(certainty)):
             green_agent.vote_status = True

@@ -62,7 +62,7 @@ class red_agent:
         if(green_agent.communicate):
             potency, follower_loss, uncertainty_change = self.get_message_potency_follower_loss(message)
             follower_loss_count += follower_loss
-            if (green_agent.vote_status):
+            if (green_agent.vote_status == False):
                 uncertainty_change *= -1
             if(self.will_vote_status_change(potency)):
                 # print("CHANGED!!!")
