@@ -200,8 +200,13 @@ class Game:
             #green interaction with each other per round
             green_nodes_visited = []    
             diction = {}
+            color_map = []
             for green_agent in self.green_team:
                 diction.update({green_agent.unique_id : green_agent.connections})
+                if green_agent.vote_status == True:
+                    color_map.append("Blue")
+                elif green_agent.vote_status == False:
+                    color_map.append("Red")
                 if(green_agent.connections):
                     for neighbor in green_agent.connections:
                         if(neighbor > green_agent.unique_id):
@@ -214,8 +219,9 @@ class Game:
             for key, value in diction.items():
                 for v in value:
                     g.add_edge(key, v)
-            nx.draw(g, with_labels = True)
-            plt.savefig("bitch.png")
+
+            nx.draw(g, node_color = color_map, with_labels = True)
+            plt.show()
             # print("Status of Green Agents")
             # for green_agent in self.green_team:
             #     print("Green Agent: ", green_agent.unique_id, "vote_status: ", green_agent.vote_status, "uncertainty: ", green_agent.uncertainty)
