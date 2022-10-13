@@ -13,8 +13,8 @@ import grey_agent
 
 # import csv
 # import igraph as ig
-# import networkx as nx
-# import matplotlib.pyplot as plt
+import networkx as nx
+import matplotlib.pyplot as plt
 import random
 import sys
 
@@ -199,7 +199,9 @@ class Game:
 
             #green interaction with each other per round
             green_nodes_visited = []    
+            diction = {}
             for green_agent in self.green_team:
+                diction.update({green_agent.unique_id : green_agent.connections})
                 if(green_agent.connections):
                     for neighbor in green_agent.connections:
                         if(neighbor > green_agent.unique_id):
@@ -208,7 +210,12 @@ class Game:
                             if((green_agent.unique_id, neighbor) not in green_nodes_visited):
                                 green_nodes_visited.append((green_agent.unique_id, neighbor))
                                 self.green_interaction(green_agent, self.green_team[neighbor])
-
+            g = nx.Graph()
+            for key, value in diction.items():
+                for v in value:
+                    g.add_edge(key, v)
+            nx.draw(g, with_labels = True)
+            plt.savefig("bitch.png")
             # print("Status of Green Agents")
             # for green_agent in self.green_team:
             #     print("Green Agent: ", green_agent.unique_id, "vote_status: ", green_agent.vote_status, "uncertainty: ", green_agent.uncertainty)
