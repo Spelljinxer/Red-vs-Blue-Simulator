@@ -87,6 +87,7 @@ class grey_agent:
     
     def get_message_potency_follower_loss(self, message):
         potency = 0
+        uncertainty_change = 0.0
         if message == self.red_messages[0] or message == self.red_messages[1]:
             potency = 0.2
             uncertainty_change = 0.04

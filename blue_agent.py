@@ -125,3 +125,15 @@ class blue_agent:
         
         print("Blue Sending message: ", message_to_send)
         return message_to_send
+
+    
+    def evaluate(self, green_team):
+        score = 0
+        for green_agent in green_team:
+            if(green_agent.communicate):
+                if(green_agent.vote_status):
+                    score += 0.5
+                
+                else:
+                    score -= 0.5
+        return score
