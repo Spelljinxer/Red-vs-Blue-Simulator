@@ -92,7 +92,54 @@ class Game:
             green_agent_uncertainty = self.upper_limit
         elif green_agent_uncertainty < self.lower_limit:
             green_agent_uncertainty = self.lower_limit
+            
+    #this should return the results of sending a message 
+    def fake_red_move(self, green_team, message):
+        follower_loss_count = 0
+        for green_agent in green_team:
+            uncertainty_change, follower_loss = self.red_agent.red_move(green_agent, message)
+            hypothetical_follower_loss += follower_loss
+            self.change_green_uncertainty(green_agent.uncertainty, uncertainty_change)
+        return green_team, hypothetical_follower_loss
 
+     #this returns a dictionary where key = each message, value = green_team after that message is sent, follower loss after that message is sent
+    def red_hypothetical_turn(self, red_agent, green_team):
+        temp_green_team = green_team
+        hypothetical_red_messages = red_agent.send_message(self.red_agent.messages)
+        results_of_messages = {}
+        for message in hypothetical_red_messages:
+            new_green_team, follower_loss = self.fake_red_move(temp_green_team, message)
+            results_of_messages.update({message : [new_green_team, follower_loss]})
+        return results_of_messages
+    
+    #this would return the best message to send 
+    def finding_best_red_move(self):
+        pass
+        #call red_hypothetical_turn(red_agent, current_green_team)
+        #returns dictionary with results of sending each message
+        #here we analyse the results of sending each message and return the best one to send?
+        #unsure how to do this 🤔
+
+    # def fake_blue_move(self, green_team, message):
+    #     follower_loss_count = 0
+    #     for green_agent in green_team:
+    #         uncertainty_change, energy_loss = self.blue_agent.blue_move(green_agent, message)
+    #         hypothetical_energy_loss += energy_loss
+    #         self.change_green_uncertainty(green_agent.uncertainty, uncertainty_change)
+    #     return green_team, hypothetical_energy_loss
+      
+    # def blue_hypothetical_turn(self, blue_agent, green_team):
+    #     temp_green_team = green_team
+    #     hypothetical_blue_messages = blue_agent.send_message(self.blue_agent.messages)
+    #     results_of_messages = {}
+    #     for message in hypothetical_blue_messages:
+    #         new_green_team, energy_loss = self.fake_blue_move(temp_green_team, message)
+    #         results_of_messages.update({message : [new_green_team, energy_loss]})
+    #     return results_of_messages
+    
+    # def finding_best_blue_move(self, results):
+    #     pass
+            
     def execute(self):
         #Every round...
         while self.blue_agent.energy_level > 0:
