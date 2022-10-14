@@ -7,16 +7,16 @@ Blue Agent
 import random
 class blue_agent:
     messages = {
-        0: "msg 1",
-        1: "msg 2",
-        2: "msg 3",
-        3: "msg 4",
-        4: "msg 5",
-        5: "msg 6",
-        6: "msg 7",
-        7: "msg 8",
-        8: "msg 9",
-        9: "msg 10",
+        0: "blue message 1",
+        1: "blue message 2",
+        2: "blue message 3",
+        3: "blue message 4",
+        4: "blue message 5",
+        5: "blue message 6",
+        6: "blue message 7",
+        7: "blue message 8",
+        8: "blue message 9",
+        9: "blue message 10",
         10: "summon grey agent",
     }
     followers = None
@@ -75,12 +75,13 @@ class blue_agent:
         return [certainty, energy_loss, uncertainty_change]                                                        
     
     def will_vote_status_change(self, certainty):
-        return random.randint(0, 75) <= certainty * 100
+        return random.randint(0, 100) <= certainty * 100
 
     def blue_move(self, green_agent, message):
         certainty, energy_loss, uncertainty_change = self.get_message_certainty_energy_loss(message)
         if (message != self.messages[10]): #if not grey agent
             self.energy_level -= energy_loss
+            pass
         if(green_agent.vote_status):
             uncertainty_change *= -1
         if(self.will_vote_status_change(certainty)):
@@ -132,8 +133,10 @@ class blue_agent:
         for green_agent in green_team:
             if(green_agent.communicate):
                 if(green_agent.vote_status):
-                    score += 0.5
-                
+                    if(green_agent.uncertainty < 0.5):
+                        score += 0.5
+                    else:
+                        score -= 0.25
                 else:
                     score -= 0.5
         return score

@@ -23,7 +23,7 @@ import math
 class Game:
     blue_energy_level = None
     red_agent = red_agent.red_agent(False)
-    blue_agent = blue_agent.blue_agent( False)
+    blue_agent = blue_agent.blue_agent(False)
     green_team = []
     grey_team = []
     upper_limit = 0.0
@@ -37,7 +37,8 @@ class Game:
         self.red_agent = red_agent.red_agent(red_user)
         self.blue_agent = blue_agent.blue_agent(blue_user)
         gp_as_percent = grey_percent / 100
-        
+        self.blue_agent.energy_level = green_total * 1.5
+        print("Blue Energy Level: ", self.blue_agent.energy_level)
         if(red_user):
             print("You are the red agent!")
         if(blue_user):
@@ -135,15 +136,19 @@ class Game:
                     message_to_send = message
             return message_to_send, value
 
-    def blue_agent_minimax(self, green_team, blue_agent, depth, maximizing_player, red_agent):
+    def blue_agent_minimax(self, green_team, blue_agent, depth, maximizing_player, red_agent, grey_agent):
         red_agent_messages = []
         for messages in red_agent.messages:
             red_agent_messages.append(red_agent.messages[messages])
         blue_agent_messages = []
-        for messages in blue_agent.messages:
-            blue_agent_messages.append(blue_agent.messages[messages])
-        
-        # print("blue agent messages: ", blue_agent_messages)
+        no_send_grey_agent = False
+        if(grey_agent):
+            no_send_grey_agent = True
+            for messages in range(len(blue_agent.messages)-1):
+                blue_agent_messages.append(blue_agent.messages[messages])
+        else:
+            for messages in blue_agent.messages:
+                blue_agent_messages.append(blue_agent.messages[messages])
         blue_agent_copy = copy.deepcopy(blue_agent)
         if(depth == 0 or len(blue_agent_messages) == 0):
             return None, blue_agent.evaluate(green_team)
@@ -156,7 +161,7 @@ class Game:
                 for green_agent in green_team_copy:
                     blue_uncertainty_change, energy_loss = blue_agent_copy.blue_move(green_agent, message)
                     self.change_green_uncertainty(green_agent.uncertainty, blue_uncertainty_change)
-                new_score = self.blue_agent_minimax(green_team_copy, blue_agent, depth - 1, False, red_agent)[1]
+                new_score = self.blue_agent_minimax(green_team_copy, blue_agent, depth - 1, False, red_agent, no_send_grey_agent)[1]
                 if(new_score > value):
                     value = new_score
                     message_to_send = message
@@ -169,7 +174,7 @@ class Game:
                 for green_agent in green_team_copy:
                     red_uncertainty_change, follower_loss = red_agent.red_move(green_agent, message)
                     self.change_green_uncertainty(green_agent.uncertainty, red_uncertainty_change)
-                new_score = self.blue_agent_minimax(green_team_copy, blue_agent, depth - 1, True, red_agent)[1]
+                new_score = self.blue_agent_minimax(green_team_copy, blue_agent, depth - 1, True, red_agent, no_send_grey_agent)[1]
                 if(new_score < value):
                     value = new_score
                     message_to_send = message
@@ -203,7 +208,7 @@ class Game:
             if(blue_user):
                 blue_message = self.blue_agent.send_message()
             else:
-                blue_message = self.blue_agent_minimax(self.green_team, self.blue_agent, 2, True, self.red_agent)[0]
+                blue_message = self.blue_agent_minimax(self.green_team, self.blue_agent, 2, True, self.red_agent, True)[0]
                 # print("after minimax BLUE ENERGY: ", self.blue_agent.energy_level)
                 print("BLUE AI SENT --> ", blue_message)
 
@@ -215,16 +220,18 @@ class Game:
                 if(grey_agent.team == "Red"):
                     grey_message = self.red_agent_minimax(self.green_team, self.red_agent, 2, True, self.blue_agent)[0]
                 elif(grey_agent.team == "Blue"):
-                    grey_message = self.blue_agent_minimax(self.green_team, self.blue_agent, 2, True, self.red_agent)[0]
+                    grey_message = self.blue_agent_minimax(self.green_team, self.blue_agent, 2, True, self.red_agent, True)[0]
 
                 print("The Grey Agent Sent ----->", grey_message)
                 uncertainty_change = 0.0
                 for green_agent in self.green_team:
                     
                     if(grey_agent.team == "Red"):
-                        uncertainty_change = grey_agent.red_move(green_agent,grey_message)
+                        uncertainty_change = grey_agent.red_move(green_agent, grey_message)
+                        # print("uncertainty change for red grey agent: ", uncertainty_change)
                     else:
-                        uncertainty_change = grey_agent.blue_move(green_agent ,grey_message)
+                        uncertainty_change = grey_agent.blue_move(green_agent, grey_message)
+                        # print("uncertainty change for blue grey agent: ", uncertainty_change)
                     
                     self.change_green_uncertainty(green_agent.uncertainty, uncertainty_change)
 

@@ -9,16 +9,16 @@ import random
 import math
 class red_agent:
     messages = {
-        0: "message 1",
-        1: "message 2",
-        2: "message 3",
-        3: "message 4",
-        4: "message 5",
-        5: "message 6",
-        6: "message 7",
-        7: "message 8",
-        8: "message 9",
-        9: "message 10",
+        0: "red message 1",
+        1: "red message 2",
+        2: "red message 3",
+        3: "red message 4",
+        4: "red message 5",
+        5: "red message 6",
+        6: "red message 7",
+        7: "red message 8",
+        8: "red message 9",
+        9: "red message 10",
     }
     
     followers = None
@@ -97,8 +97,10 @@ class red_agent:
         for green_agent in green_team:
             if(green_agent.communicate):
                 if(green_agent.vote_status == False):
-                    score += 0.5
-                
+                    if(green_agent.uncertainty < 0.5):
+                        score += 0.5
+                    else:
+                        score -= 0.25
                 else:
                     score -= 0.5
         return score
