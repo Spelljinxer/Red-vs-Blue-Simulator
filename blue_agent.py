@@ -101,7 +101,7 @@ class blue_agent:
                 message_output.append(self.messages[10])
                 #display the list of messages using prettytable
                 table = pt.PrettyTable()
-                table.field_names = ["Message Number", "Message"]
+                table.field_names = ["Message Number", '\x1b[0;36;44m' + "Message" + '\x1b[0m']
                 for i in range(len(message_output)):
                     table.add_row([i, message_output[i]])
                 print(table)
@@ -109,7 +109,7 @@ class blue_agent:
             else:
                 #display the list of messages using prettytable
                 table = pt.PrettyTable()
-                table.field_names = ["Message Number", "Message"]
+                table.field_names = ["Message Number", '\x1b[0;36;44m' + "Message" + '\x1b[0m']
                 for i in range(len(message_output)):
                     table.add_row([i, message_output[i]])
                 print(table)

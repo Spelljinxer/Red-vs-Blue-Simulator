@@ -194,6 +194,7 @@ class Game:
         nx.draw(g, node_color = color_map, with_labels = True)
         plt.show()
     def execute(self):
+        print("+-------------------------------------+")
         #Every round...
         turn = 0
         while self.blue_agent.energy_level > 0:
@@ -289,7 +290,6 @@ class Game:
                     total_voting += 1
                 if(green_agent.communicate):
                     self.red_agent.followers += 1
-
             print("----------------------------------")
             print("Total Population:", len(self.green_team))
             print("Total Voting Population: ", total_voting)

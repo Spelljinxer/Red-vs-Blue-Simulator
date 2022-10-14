@@ -79,7 +79,7 @@ class red_agent:
                 message_output.append(self.messages[messages])
             #display the message using prettytable
             table = pt.PrettyTable()
-            table.field_names = ["Message Number", "Message"]
+            table.field_names = ["Message Number", '\x1b[1;33;45m' + "Message" + '\x1b[0m']
             for i in range(len(message_output)):
                 table.add_row([i, message_output[i]])
             print(table)
