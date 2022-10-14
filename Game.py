@@ -205,6 +205,22 @@ class Game:
                     value = new_score
                     message_to_send = message
             return message_to_send, value
+    
+    def visualisation(self, green_team):
+                diction = {}
+                color_map = []
+                for green_agent in self.green_team:
+                    diction.update({green_agent.unique_id : green_agent.connections})
+                    if green_agent.vote_status == True:
+                        color_map.append("Blue")
+                    else:
+                        color_map.append("Red")
+                g = nx.Graph()
+                for key, value in diction.items():
+                    for v in value:
+                        g.add_edge(key, v)
+                nx.draw(g, node_color = color_map, with_labels = True)
+                plt.show()
 
     def execute(self):
         #Every round...
@@ -282,14 +298,7 @@ class Game:
                     index += 1
             #green interaction with each other per round
             green_nodes_visited = []    
-            diction = {}
-            color_map = []
             for green_agent in self.green_team:
-                diction.update({green_agent.unique_id : green_agent.connections})
-                if green_agent.vote_status == True:
-                    color_map.append("Blue")
-                elif green_agent.vote_status == False:
-                    color_map.append("Red")
                 if(green_agent.connections):
                     for neighbor in green_agent.connections:
                         if(neighbor > green_agent.unique_id):
@@ -298,12 +307,8 @@ class Game:
                             if((green_agent.unique_id, neighbor) not in green_nodes_visited):
                                 green_nodes_visited.append((green_agent.unique_id, neighbor))
                                 self.green_interaction(green_agent, self.green_team[neighbor])
-            g = nx.Graph()
-            for key, value in diction.items():
-                for v in value:
-                    g.add_edge(key, v)
-            nx.draw(g, node_color = color_map, with_labels = True)
-            plt.show()
+            
+            self.visualisation(self.green_team)
 
             print("Status of Green Agents")
             for green_agent in self.green_team:
