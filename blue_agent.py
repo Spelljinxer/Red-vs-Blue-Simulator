@@ -105,11 +105,14 @@ class blue_agent:
                 for i in range(len(message_output)):
                     table.add_row([i, message_output[i]])
                 print(table)
-
-                # print("Available Messages= ", message_output)
                 message = input("Please enter a message(0 - 10): ")
             else:
-                print("Available Messages= ", message_output)
+                #display the list of messages using prettytable
+                table = pt.PrettyTable()
+                table.field_names = ["Message Number", "Message"]
+                for i in range(len(message_output)):
+                    table.add_row([i, message_output[i]])
+                print(table)
                 message = input("Please enter a message(0 - 9): ")
             
             try:

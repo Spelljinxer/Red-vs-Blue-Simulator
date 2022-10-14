@@ -6,7 +6,7 @@ Red Agent
 """
 
 import random
-import math
+import prettytable as pt
 class red_agent:
     messages = {
         0: "red message 1",
@@ -77,7 +77,12 @@ class red_agent:
             message_output = []
             for messages in self.messages:
                 message_output.append(self.messages[messages])
-            print("Available Messages=", message_output)
+            #display the message using prettytable
+            table = pt.PrettyTable()
+            table.field_names = ["Message Number", "Message"]
+            for i in range(len(message_output)):
+                table.add_row([i, message_output[i]])
+            print(table)
             message = input("Please enter a message(0 - 9): ")
             try:
                 message_to_send = message_output[int(message)]
