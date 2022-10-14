@@ -13,8 +13,8 @@ import grey_agent
 
 # import csv
 # import igraph as ig
-# import networkx as nx
-# import matplotlib.pyplot as plt
+import networkx as nx
+import matplotlib.pyplot as plt
 import random
 import sys
 import copy
@@ -95,7 +95,33 @@ class Game:
             green_agent_uncertainty = self.upper_limit
         elif green_agent_uncertainty < self.lower_limit:
             green_agent_uncertainty = self.lower_limit
+            
+    #this should return the results of sending a message 
+    def fake_red_move(self, green_team, message):
+        follower_loss_count = 0
+        for green_agent in green_team:
+            uncertainty_change, follower_loss = self.red_agent.red_move(green_agent, message)
+            hypothetical_follower_loss += follower_loss
+            self.change_green_uncertainty(green_agent.uncertainty, uncertainty_change)
+        return green_team, hypothetical_follower_loss
 
+     #this returns a dictionary where key = each message, value = green_team after that message is sent, follower loss after that message is sent
+    def red_hypothetical_turn(self, red_agent, green_team):
+        temp_green_team = green_team
+        hypothetical_red_messages = red_agent.send_message(self.red_agent.messages)
+        results_of_messages = {}
+        for message in hypothetical_red_messages:
+            new_green_team, follower_loss = self.fake_red_move(temp_green_team, message)
+            results_of_messages.update({message : [new_green_team, follower_loss]})
+        return results_of_messages
+    
+    #this would return the best message to send 
+    def finding_best_red_move(self):
+        pass
+        #call red_hypothetical_turn(red_agent, current_green_team)
+        #returns dictionary with results of sending each message
+        #here we analyse the results of sending each message and return the best one to send?
+        #unsure how to do this 🤔
 
     #returns the best message that the red agent should send to the green team
     def red_agent_minimax(self, green_team, red_agent, depth, maximizing_player, blue_agent):
@@ -256,7 +282,14 @@ class Game:
                     index += 1
             #green interaction with each other per round
             green_nodes_visited = []    
+            diction = {}
+            color_map = []
             for green_agent in self.green_team:
+                diction.update({green_agent.unique_id : green_agent.connections})
+                if green_agent.vote_status == True:
+                    color_map.append("Blue")
+                elif green_agent.vote_status == False:
+                    color_map.append("Red")
                 if(green_agent.connections):
                     for neighbor in green_agent.connections:
                         if(neighbor > green_agent.unique_id):
@@ -265,6 +298,12 @@ class Game:
                             if((green_agent.unique_id, neighbor) not in green_nodes_visited):
                                 green_nodes_visited.append((green_agent.unique_id, neighbor))
                                 self.green_interaction(green_agent, self.green_team[neighbor])
+            g = nx.Graph()
+            for key, value in diction.items():
+                for v in value:
+                    g.add_edge(key, v)
+            nx.draw(g, node_color = color_map, with_labels = True)
+            plt.show()
 
             print("Status of Green Agents")
             for green_agent in self.green_team:
@@ -273,6 +312,7 @@ class Game:
                     total_voting += 1
                 if(green_agent.communicate):
                     self.red_agent.followers += 1
+                    
             print("----------------------------------")
             print("Total Population:", len(self.green_team))
             print("Total Voting Population: ", total_voting)
