@@ -23,10 +23,15 @@ class red_agent:
     
     followers = None
     potency = None
-    def __init__(self, user_playing):
+    uncertainty_lower_limit = 0.0
+    uncertainty_upper_limit = 0.0
+    unique_id = 0
+    def __init__(self, user_playing, lower_limit, upper_limit):
         self.followers = 0
         self.potency = 0
         self.user_playing = user_playing 
+        self.uncertainty_lower_limit = lower_limit
+        self.uncertainty_upper_limit = upper_limit
         
     def get_message_potency_follower_loss(self, message):
         potency = 0
@@ -35,23 +40,23 @@ class red_agent:
         if message == self.messages[0] or message == self.messages[1]:
             potency = 0.2
             follower_loss = 0.002
-            uncertainty_change = 0.04
+            uncertainty_change = 0.03125
         elif message == self.messages[2] or message == self.messages[3]:
             potency = 0.4
             follower_loss = 0.004
-            uncertainty_change = 0.08
+            uncertainty_change = 0.0625
         elif message == self.messages[4] or message == self.messages[5]:
             potency = 0.6
             follower_loss = 0.006
-            uncertainty_change = 0.12
+            uncertainty_change = 0.125
         elif message == self.messages[6] or message == self.messages[7]:
             potency = 0.8
             follower_loss = 0.008
-            uncertainty_change = 0.16
+            uncertainty_change = 0.25
         elif message == self.messages[8] or message == self.messages[9]:
             potency = 1.0
             follower_loss = 0.01
-            uncertainty_change = 0.2
+            uncertainty_change = 0.5
         return [potency, follower_loss, uncertainty_change]
 
     def will_vote_status_change(self, potency):
@@ -66,9 +71,7 @@ class red_agent:
             if (green_agent.vote_status == False):
                 uncertainty_change *= -1
             if(self.will_vote_status_change(potency)):
-                # print("CHANGED!!!")
                 green_agent.vote_status = False
-        
         return uncertainty_change, follower_loss_count
 
     def send_message(self):

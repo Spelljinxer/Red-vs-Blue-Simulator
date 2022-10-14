@@ -22,8 +22,8 @@ import math
 
 class Game:
     blue_energy_level = None
-    red_agent = red_agent.red_agent(False)
-    blue_agent = blue_agent.blue_agent(False)
+    red_agent = red_agent.red_agent(False, 0, 0)
+    blue_agent = blue_agent.blue_agent(False, 0, 0)
     green_team = []
     grey_team = []
     upper_limit = 0.0
@@ -34,8 +34,8 @@ class Game:
     def __init__(self, uncertainty_range, green_total, grey_percent, edge_probability, initial_voting, red_user, blue_user):
         self.upper_limit = uncertainty_range[1]
         self.lower_limit = uncertainty_range[0]
-        self.red_agent = red_agent.red_agent(red_user)
-        self.blue_agent = blue_agent.blue_agent(blue_user)
+        self.red_agent = red_agent.red_agent(red_user, self.lower_limit, self.upper_limit)
+        self.blue_agent = blue_agent.blue_agent(blue_user, self.lower_limit, self.upper_limit)
         gp_as_percent = grey_percent / 100
         self.blue_agent.energy_level = green_total * 1.5
         print("Blue Energy Level: ", self.blue_agent.energy_level)
@@ -178,7 +178,8 @@ class Game:
                     value = new_score
                     message_to_send = message
             return message_to_send, value
-    def visualisation(self, green_team):
+    def visualisation(self, green_team, red_agent, blue_agent):
+        plt.figure(3,figsize=(8,8))
         diction = {}
         color_map = []
         for green_agent in green_team:
@@ -187,12 +188,20 @@ class Game:
                 color_map.append("Blue")
             else:
                 color_map.append("Red")
+        
+        red_connections = []
+        for green_agent in green_team:
+            if(green_agent.communicate):
+                red_connections.append(green_agent.unique_id)   
         g = nx.Graph()
+
         for key, value in diction.items():
             for v in value:
                 g.add_edge(key, v)
         nx.draw(g, node_color = color_map, with_labels = True)
+        
         plt.show()
+
     def execute(self):
         print("+-------------------------------------+")
         #Every round...
@@ -280,8 +289,10 @@ class Game:
                             if((green_agent.unique_id, neighbor) not in green_nodes_visited):
                                 green_nodes_visited.append((green_agent.unique_id, neighbor))
                                 self.green_interaction(green_agent, self.green_team[neighbor])
+            
 
-            self.visualisation(self.green_team)
+            print("Showing current status of the population...")
+            self.visualisation(self.green_team, self.red_agent, self.blue_agent)
 
             print("Status of Green Agents")
             for green_agent in self.green_team:
@@ -301,11 +312,12 @@ class Game:
             print("Blue Energy Level: ", self.blue_agent.energy_level)
             print("----------------------------------")
             turn += 1
-            print("====== NEXT ROUND ======\n")
+            print("================== NEXT ROUND ==================\n")
 
         print("----------------------------------")
         #end of game
         print("Blue has run out of energy!\n")
+        print("The game lasted for",turn, "rounds")
         vote_count = 0
 
         for green_agent in self.green_team:
@@ -320,7 +332,6 @@ class Game:
         elif(vote_count < len(self.green_team)/2):
             print("The Winner is Red!!!")
         pass
-
 
 #---------------------------------EVERYTHING BELOW RELATE TO THE MAIN EXECUTION----------------------------
 def print_usage():
@@ -348,24 +359,13 @@ if __name__ == "__main__":
         print_usage()
         sys.exit(1)
 
-
     total_Green = int(sys.argv[2])
     probability_of_connections = float(sys.argv[4])
     grey_agent_percentage = int(sys.argv[6])
-
-
     uncertainty_range = sys.argv[8]
     uncertainty_range = [float(x.strip()) for x in uncertainty_range.split(',')]
-
     initial_voting = int(sys.argv[10])
 
-
-    # print("Confirming...")
-    # print("\t- Total Green Agents: " + str(total_Green))
-    # print("\t- Probability of Connections: " + str(probability_of_connections))
-    # print("\t- % of pop that are grey agents: ", grey_agent_percentage)
-    # print("\t- uncertainty_range: ", uncertainty_range)
-    # print("\t- initial_voting: ", initial_voting)
     sentence = "Confirming Your Selection...\n"
     sentence += '\x1b[6;30;42m' +"- Total Green Agents: " +  str(total_Green) + '\x1b[0m' + "\n"
     sentence += '\x1b[1;33;45m' +"- Probability of Connections: " + str(probability_of_connections) + '\x1b[0m' + "\n"
@@ -395,38 +395,12 @@ if __name__ == "__main__":
             red_user = True
         elif choice == "b":
             blue_user = True
+        else:
+            print("Invalid choice, exiting...")
+            sys.exit(1)
     else:
         print("You have chosen not to play. The AI's will instead play.")
 
     Game = Game(uncertainty_range, total_Green, grey_agent_percentage, probability_of_connections, initial_voting, red_user, blue_user)
     Game.execute()
-
-    sys.exit(1)
-    #---------------------igraph???--------------
-    # game = Game(10, 50, 10, 100, red_user, blue_user)
-    # '''
-    # Don't delete this, this is how we generate a graph
-    # '''
-    # green_nodes = 50
-    # edges = 100
-    # g = ig.Graph.Erdos_Renyi(n=green_nodes, m=edges)
-    # g.add_vertices(2)
-    # g.vs[-2]['colour'] = 'red'
-    # g.vs[-1]['blue'] = 'blue'
-    # for i in range(len(g.vs)-2):
-    #     g.vs[i]['colour'] = 'green'
-
-    # #connect all green nodes to each other and to the red node and blue node
-    # for i in range(len(g.vs)-2):
-    #     g.add_edges([(i, len(g.vs)-2), (i, len(g.vs)-1)])
-    # fig, ax = plt.subplots()
-    # ig.plot(g, target=ax)
-    # plt.show()
-
-
-
-
-
-
-
 

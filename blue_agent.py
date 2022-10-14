@@ -23,9 +23,13 @@ class blue_agent:
     followers = None
     energy_level = 100
     grey_agent_num = 0
-    def __init__(self, user_playing):
+    uncertainty_lower_limit = 0.0
+    uncertainty_upper_limit = 0.0
+    def __init__(self, user_playing, lower_limit, upper_limit):
         self.followers = 0
         self.user_playing = user_playing
+        self.uncertainty_lower_limit = lower_limit
+        self.uncertainty_upper_limit = upper_limit
     
     def get_message_certainty_energy_loss(self, message):
         certainty = 0.0
@@ -70,13 +74,13 @@ class blue_agent:
             energy_loss = 0.45
             uncertainty_change = 0.18
         elif message == self.messages[9]:
-            certainty = 1.0
+            certainty = 1
             energy_loss = 0.5
             uncertainty_change = 0.2
         return [certainty, energy_loss, uncertainty_change]                                                        
     
     def will_vote_status_change(self, certainty):
-        return random.randint(0, 100) <= certainty * 100
+        return random.randint(0, 200) <= certainty * 100
 
     def blue_move(self, green_agent, message):
         certainty, energy_loss, uncertainty_change = self.get_message_certainty_energy_loss(message)
