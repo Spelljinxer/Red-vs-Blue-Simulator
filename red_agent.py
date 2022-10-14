@@ -6,18 +6,19 @@ Red Agent
 """
 
 import random
+import math
 class red_agent:
     messages = {
-        0: "message 1",
-        1: "message 2",
-        2: "message 3",
-        3: "message 4",
-        4: "message 5",
-        5: "message 6",
-        6: "message 7",
-        7: "message 8",
-        8: "message 9",
-        9: "message 10",
+        0: "red message 1",
+        1: "red message 2",
+        2: "red message 3",
+        3: "red message 4",
+        4: "red message 5",
+        5: "red message 6",
+        6: "red message 7",
+        7: "red message 8",
+        8: "red message 9",
+        9: "red message 10",
     }
     
     followers = None
@@ -33,23 +34,23 @@ class red_agent:
         uncertainty_change = 0
         if message == self.messages[0] or message == self.messages[1]:
             potency = 0.2
-            follower_loss = 0.02
+            follower_loss = 0.002
             uncertainty_change = 0.04
         elif message == self.messages[2] or message == self.messages[3]:
             potency = 0.4
-            follower_loss = 0.04
+            follower_loss = 0.004
             uncertainty_change = 0.08
         elif message == self.messages[4] or message == self.messages[5]:
             potency = 0.6
-            follower_loss = 0.06
+            follower_loss = 0.006
             uncertainty_change = 0.12
         elif message == self.messages[6] or message == self.messages[7]:
             potency = 0.8
-            follower_loss = 0.08
+            follower_loss = 0.008
             uncertainty_change = 0.16
         elif message == self.messages[8] or message == self.messages[9]:
             potency = 1.0
-            follower_loss = 0.1
+            follower_loss = 0.01
             uncertainty_change = 0.2
         return [potency, follower_loss, uncertainty_change]
 
@@ -91,7 +92,16 @@ class red_agent:
         print("Red Sending message: ", message_to_send)
         return message_to_send
         
-
-
-
+    def evaluate(self, green_team):
+        score = 0
+        for green_agent in green_team:
+            if(green_agent.communicate):
+                if(green_agent.vote_status == False):
+                    if(green_agent.uncertainty < 0.5):
+                        score += 0.5
+                    else:
+                        score -= 0.25
+                else:
+                    score -= 0.5
+        return score
 
