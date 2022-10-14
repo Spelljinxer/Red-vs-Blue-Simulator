@@ -2,7 +2,7 @@
 Game Class to Execute the Game
 @Authors | @StudentId
     Reiden Rufin | 22986337
-    Nathan Eden  | 22960674 
+    Nathan Eden  | 22960674
 
 saving this here: python Game.py -ge 100 -gp 5 -gr 10 -u 0.0,1.0 -p 50
 """
@@ -49,7 +49,7 @@ class Game:
                 self.grey_team.append(grey_agent.grey_agent("Red", agent_id))
             else:
                 self.grey_team.append(grey_agent.grey_agent("Blue", agent_id))
-        
+
         new_green_total = green_total - (green_total * gp_as_percent)
         voting_pop = int(new_green_total * (initial_voting/100))
         for agent_id in range(int(new_green_total)):
@@ -60,7 +60,7 @@ class Game:
                 vote_status = True
                 break
             self.green_team.append(green_agent.green_agent(connections, agent_id, vote_status, uncertainty))
-           
+
         #generate an undirected graph with n nodes with p probability of an edge between any two nodes
         for agent in self.green_team:
             for agent2 in self.green_team:
@@ -88,40 +88,13 @@ class Game:
             neighbor_node.uncertainty -= new_uncertainty
             neighbor_node.uncertainty = round(neighbor_node.uncertainty, 2)
             pass
-        
+
     def change_green_uncertainty(self, green_agent_uncertainty, uncertainty_change):
         green_agent_uncertainty += uncertainty_change
         if green_agent_uncertainty > self.upper_limit:
             green_agent_uncertainty = self.upper_limit
         elif green_agent_uncertainty < self.lower_limit:
             green_agent_uncertainty = self.lower_limit
-            
-    #this should return the results of sending a message 
-    def fake_red_move(self, green_team, message):
-        follower_loss_count = 0
-        for green_agent in green_team:
-            uncertainty_change, follower_loss = self.red_agent.red_move(green_agent, message)
-            hypothetical_follower_loss += follower_loss
-            self.change_green_uncertainty(green_agent.uncertainty, uncertainty_change)
-        return green_team, hypothetical_follower_loss
-
-     #this returns a dictionary where key = each message, value = green_team after that message is sent, follower loss after that message is sent
-    def red_hypothetical_turn(self, red_agent, green_team):
-        temp_green_team = green_team
-        hypothetical_red_messages = red_agent.send_message(self.red_agent.messages)
-        results_of_messages = {}
-        for message in hypothetical_red_messages:
-            new_green_team, follower_loss = self.fake_red_move(temp_green_team, message)
-            results_of_messages.update({message : [new_green_team, follower_loss]})
-        return results_of_messages
-    
-    #this would return the best message to send 
-    def finding_best_red_move(self):
-        pass
-        #call red_hypothetical_turn(red_agent, current_green_team)
-        #returns dictionary with results of sending each message
-        #here we analyse the results of sending each message and return the best one to send?
-        #unsure how to do this 🤔
 
     #returns the best message that the red agent should send to the green team
     def red_agent_minimax(self, green_team, red_agent, depth, maximizing_player, blue_agent):
@@ -131,7 +104,7 @@ class Game:
         blue_agent_messages = []
         for messages in blue_agent.messages:
             blue_agent_messages.append(blue_agent.messages[messages])
-        
+
         if(depth == 0 or len(red_agent_messages) == 0):
             return None, red_agent.evaluate(green_team)
 
@@ -187,7 +160,7 @@ class Game:
                 for green_agent in green_team_copy:
                     blue_uncertainty_change, energy_loss = blue_agent_copy.blue_move(green_agent, message)
                     self.change_green_uncertainty(green_agent.uncertainty, blue_uncertainty_change)
-                new_score = self.blue_agent_minimax(green_team_copy, blue_agent, depth - 1, False, red_agent, no_send_grey_agent)[1]
+                new_score = self.blue_agent_minimax(green_team_copy, blue_agent_copy, depth - 1, False, red_agent, no_send_grey_agent)[1]
                 if(new_score > value):
                     value = new_score
                     message_to_send = message
@@ -200,12 +173,26 @@ class Game:
                 for green_agent in green_team_copy:
                     red_uncertainty_change, follower_loss = red_agent.red_move(green_agent, message)
                     self.change_green_uncertainty(green_agent.uncertainty, red_uncertainty_change)
-                new_score = self.blue_agent_minimax(green_team_copy, blue_agent, depth - 1, True, red_agent, no_send_grey_agent)[1]
+                new_score = self.blue_agent_minimax(green_team_copy, blue_agent_copy, depth - 1, True, red_agent, no_send_grey_agent)[1]
                 if(new_score < value):
                     value = new_score
                     message_to_send = message
             return message_to_send, value
-
+    def visualisation(self, green_team):
+        diction = {}
+        color_map = []
+        for green_agent in green_team:
+            diction.update({green_agent.unique_id : green_agent.connections})
+            if green_agent.vote_status == True:
+                color_map.append("Blue")
+            else:
+                color_map.append("Red")
+        g = nx.Graph()
+        for key, value in diction.items():
+            for v in value:
+                g.add_edge(key, v)
+        nx.draw(g, node_color = color_map, with_labels = True)
+        plt.show()
     def execute(self):
         #Every round...
         turn = 0
@@ -213,17 +200,18 @@ class Game:
             if(self.blue_agent.energy_level <= 0):
                 break
             print("Starting Blue Energy: ", self.blue_agent.energy_level)
-            total_voting = 0
             
+            total_voting = 0
+
             red_message = ""
             if(red_user):
                 red_message = self.red_agent.send_message()
             else:
                 red_message = self.red_agent_minimax(self.green_team, self.red_agent, 2, True, self.blue_agent)[0]
                 print("RED AI SENT --> ", red_message)
-            
+
             total_follower_loss = 0
-            
+
             for green_agent in self.green_team:
                 red_uncertainty_change, follower_loss = self.red_agent.red_move(green_agent, red_message)
                 total_follower_loss += follower_loss
@@ -251,19 +239,19 @@ class Game:
                 print("The Grey Agent Sent ----->", grey_message)
                 uncertainty_change = 0.0
                 for green_agent in self.green_team:
-                    
+
                     if(grey_agent.team == "Red"):
                         uncertainty_change = grey_agent.red_move(green_agent, grey_message)
                         # print("uncertainty change for red grey agent: ", uncertainty_change)
                     else:
                         uncertainty_change = grey_agent.blue_move(green_agent, grey_message)
                         # print("uncertainty change for blue grey agent: ", uncertainty_change)
-                    
+
                     self.change_green_uncertainty(green_agent.uncertainty, uncertainty_change)
 
                 self.grey_team.remove(grey_agent)
                 self.blue_agent.grey_agent_num -= 1
-            
+
             else:
                 for green_agent in self.green_team:
                     uncertainty_change, energy_loss = self.blue_agent.blue_move(green_agent, blue_message)
@@ -271,7 +259,7 @@ class Game:
                     self.change_green_uncertainty(green_agent.uncertainty, uncertainty_change)
 
             print("energy loss this round: ", total_energy_loss)
-            
+
             #cutoff communication after follower loss
             index = 0
             while(index < round(total_follower_loss)):
@@ -281,15 +269,8 @@ class Game:
                     self.red_agent.followers -= 1
                     index += 1
             #green interaction with each other per round
-            green_nodes_visited = []    
-            diction = {}
-            color_map = []
+            green_nodes_visited = []
             for green_agent in self.green_team:
-                diction.update({green_agent.unique_id : green_agent.connections})
-                if green_agent.vote_status == True:
-                    color_map.append("Blue")
-                elif green_agent.vote_status == False:
-                    color_map.append("Red")
                 if(green_agent.connections):
                     for neighbor in green_agent.connections:
                         if(neighbor > green_agent.unique_id):
@@ -298,12 +279,8 @@ class Game:
                             if((green_agent.unique_id, neighbor) not in green_nodes_visited):
                                 green_nodes_visited.append((green_agent.unique_id, neighbor))
                                 self.green_interaction(green_agent, self.green_team[neighbor])
-            g = nx.Graph()
-            for key, value in diction.items():
-                for v in value:
-                    g.add_edge(key, v)
-            nx.draw(g, node_color = color_map, with_labels = True)
-            plt.show()
+
+            self.visualisation(self.green_team)
 
             print("Status of Green Agents")
             for green_agent in self.green_team:
@@ -312,12 +289,12 @@ class Game:
                     total_voting += 1
                 if(green_agent.communicate):
                     self.red_agent.followers += 1
-                    
+
             print("----------------------------------")
             print("Total Population:", len(self.green_team))
             print("Total Voting Population: ", total_voting)
             print("Total Red Followers:", self.red_agent.followers)
-            #reset the count 
+            #reset the count
             self.red_agent.followers = 0
             total_follower_loss = 0
             self.blue_agent.energy_level - total_energy_loss
@@ -325,12 +302,12 @@ class Game:
             print("----------------------------------")
             turn += 1
             print("====== NEXT ROUND ======\n")
-            
+
         print("----------------------------------")
         #end of game
         print("Blue has run out of energy!\n")
         vote_count = 0
-        
+
         for green_agent in self.green_team:
             # print("Green Agent: ", green_agent.unique_id, "vote_status: ", green_agent.vote_status, "uncertainty: ", green_agent.uncertainty)
             if(green_agent.vote_status):
@@ -364,13 +341,13 @@ Execute.
 if __name__ == "__main__":
     import prettytable as pt
 
-    
+
     n = len(sys.argv)
     #change this check if we're adding more
     if(n != 11):
         print_usage()
         sys.exit(1)
-    
+
 
     total_Green = int(sys.argv[2])
     probability_of_connections = float(sys.argv[4])
@@ -381,7 +358,7 @@ if __name__ == "__main__":
     uncertainty_range = [float(x.strip()) for x in uncertainty_range.split(',')]
 
     initial_voting = int(sys.argv[10])
-    
+
 
     # print("Confirming...")
     # print("\t- Total Green Agents: " + str(total_Green))
@@ -408,7 +385,7 @@ if __name__ == "__main__":
     if(confirm != "y"):
         print("Exiting...")
         sys.exit(1)
-    
+
     red_user = False
     blue_user = False
     playing = input("Do you wish to play? (y/n): ")
@@ -420,7 +397,7 @@ if __name__ == "__main__":
             blue_user = True
     else:
         print("You have chosen not to play. The AI's will instead play.")
-    
+
     Game = Game(uncertainty_range, total_Green, grey_agent_percentage, probability_of_connections, initial_voting, red_user, blue_user)
     Game.execute()
 
@@ -438,7 +415,7 @@ if __name__ == "__main__":
     # g.vs[-1]['blue'] = 'blue'
     # for i in range(len(g.vs)-2):
     #     g.vs[i]['colour'] = 'green'
-    
+
     # #connect all green nodes to each other and to the red node and blue node
     # for i in range(len(g.vs)-2):
     #     g.add_edges([(i, len(g.vs)-2), (i, len(g.vs)-1)])
@@ -452,4 +429,4 @@ if __name__ == "__main__":
 
 
 
-   
+

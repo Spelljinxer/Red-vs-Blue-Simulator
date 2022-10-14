@@ -5,6 +5,7 @@ Blue Agent
     Nathan Eden  | 22960674      
 """
 import random
+import prettytable as pt
 class blue_agent:
     messages = {
         0: "blue message 1",
@@ -98,7 +99,14 @@ class blue_agent:
             message = ""
             if(self.grey_agent_num > 0):
                 message_output.append(self.messages[10])
-                print("Available Messages= ", message_output)
+                #display the list of messages using prettytable
+                table = pt.PrettyTable()
+                table.field_names = ["Message Number", "Message"]
+                for i in range(len(message_output)):
+                    table.add_row([i, message_output[i]])
+                print(table)
+
+                # print("Available Messages= ", message_output)
                 message = input("Please enter a message(0 - 10): ")
             else:
                 print("Available Messages= ", message_output)
