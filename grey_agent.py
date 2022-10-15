@@ -105,9 +105,6 @@ class grey_agent:
             uncertainty_change = 0.2
         return [potency, uncertainty_change]
 
-    def will_vote_status_change(self, potency):
-        return random.randint(0, 100) <= potency * 100
-    
     def red_move(self, green_agent, message):
         uncertainty_change = 0.0
         if(green_agent.communicate):
