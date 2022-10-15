@@ -97,7 +97,7 @@ class Game:
             green_agent_uncertainty = self.lower_limit
 
     #returns the best message that the red agent should send to the green team
-    def red_agent_minimax(self, green_team, red_agent, depth, maximizing_player, blue_agent):
+    def red_agent_minimax(self, green_team, red_agent, depth, maximizing_player, blue_agent, alpha, beta):
         red_agent_messages = []
         for messages in red_agent.messages:
             red_agent_messages.append(red_agent.messages[messages])
@@ -116,10 +116,13 @@ class Game:
                 for green_agent in green_team_copy:
                     red_uncertainty_change, follower_loss = red_agent.red_move(green_agent, message)
                     self.change_green_uncertainty(green_agent.uncertainty, red_uncertainty_change)
-                new_score = self.red_agent_minimax(green_team_copy, red_agent, depth - 1, False, blue_agent)[1]
+                new_score = self.red_agent_minimax(green_team_copy, red_agent, depth - 1, False, blue_agent, alpha, beta)[1]
                 if(new_score > value):
                     value = new_score
                     message_to_send = message
+                alpha = max(alpha, value)
+                if alpha >= beta:
+                    break
             return message_to_send, value
         else:
             value = math.inf
@@ -129,13 +132,17 @@ class Game:
                 for green_agent in green_team_copy:
                     blue_uncertainty_change, energy_loss = blue_agent.blue_move(green_agent, message)
                     self.change_green_uncertainty(green_agent.uncertainty, blue_uncertainty_change)
-                new_score = self.red_agent_minimax(green_team_copy, red_agent, depth - 1, True, blue_agent)[1]
+                new_score = self.red_agent_minimax(green_team_copy, red_agent, depth - 1, True, blue_agent, alpha, beta)[1]
                 if(new_score < value):
                     value = new_score
                     message_to_send = message
+                beta = min(beta, value)
+                if alpha >= beta:
+                    break
+
             return message_to_send, value
 
-    def blue_agent_minimax(self, green_team, blue_agent, depth, maximizing_player, red_agent, grey_agent):
+    def blue_agent_minimax(self, green_team, blue_agent, depth, maximizing_player, red_agent, grey_agent, alpha, beta):
         red_agent_messages = []
         for messages in red_agent.messages:
             red_agent_messages.append(red_agent.messages[messages])
@@ -160,10 +167,13 @@ class Game:
                 for green_agent in green_team_copy:
                     blue_uncertainty_change, energy_loss = blue_agent_copy.blue_move(green_agent, message)
                     self.change_green_uncertainty(green_agent.uncertainty, blue_uncertainty_change)
-                new_score = self.blue_agent_minimax(green_team_copy, blue_agent_copy, depth - 1, False, red_agent, no_send_grey_agent)[1]
+                new_score = self.blue_agent_minimax(green_team_copy, blue_agent_copy, depth - 1, False, red_agent, no_send_grey_agent, alpha, beta)[1]
                 if(new_score > value):
                     value = new_score
                     message_to_send = message
+                alpha = max(alpha, value)
+                if alpha >= beta:
+                    break
             return message_to_send, value
         else:
             value = math.inf
@@ -173,39 +183,55 @@ class Game:
                 for green_agent in green_team_copy:
                     red_uncertainty_change, follower_loss = red_agent.red_move(green_agent, message)
                     self.change_green_uncertainty(green_agent.uncertainty, red_uncertainty_change)
-                new_score = self.blue_agent_minimax(green_team_copy, blue_agent_copy, depth - 1, True, red_agent, no_send_grey_agent)[1]
+                new_score = self.blue_agent_minimax(green_team_copy, blue_agent_copy, depth - 1, True, red_agent, no_send_grey_agent, alpha, beta)[1]
                 if(new_score < value):
                     value = new_score
                     message_to_send = message
+                beta = min(beta, value)
+                if alpha >= beta:
+                    break
             return message_to_send, value
-    def visualisation(self, green_team, red_agent, blue_agent):
-        plt.figure(3,figsize=(8,8))
-        diction = {}
+
+    def visualisation(self, green_team):
+        plt.figure(1,figsize=(12,12))
+        green_connections = {}
+        red_connections = {}
         color_map = []
+        g = nx.Graph()
+        
+        #Adding Red Agent and Blue Agent
+        g.add_node("RED")
+        g.add_node("BLUE")
+        color_map.append("Red")
+        color_map.append("Blue")
+        
         for green_agent in green_team:
-            diction.update({green_agent.unique_id : green_agent.connections})
+            green_connections.update({green_agent.unique_id : green_agent.connections})
+            red_connections.update({green_agent.unique_id : green_agent.communicate})
+            #Paint nodes blue is they ARE voting, red if they ARE NOT voting
             if green_agent.vote_status == True:
                 color_map.append("Blue")
             else:
                 color_map.append("Red")
-        
-        red_connections = []
-        for green_agent in green_team:
-            if(green_agent.communicate):
-                red_connections.append(green_agent.unique_id)   
-        g = nx.Graph()
-
-        for key, value in diction.items():
+        #Add edge between each green nodes neighbour
+        for key, value in green_connections.items():
             for v in value:
                 g.add_edge(key, v)
-        nx.draw(g, node_color = color_map, with_labels = True)
-        
+        #Add edge between red node and its neighbours and blue node and its neighbours
+        for key, value in red_connections.items():
+            g.add_edge(key, "BLUE")
+            if value == True:
+                g.add_edge(key, "RED")
+        #draw the graph
+        nx.draw(g, node_color = color_map, with_labels=True)
+        #display graph
         plt.show()
 
     def execute(self):
         print("+-------------------------------------+")
         #Every round...
         turn = 0
+        voting_pop = 0
         while self.blue_agent.energy_level > 0:
             if(self.blue_agent.energy_level <= 0):
                 break
@@ -217,7 +243,7 @@ class Game:
             if(red_user):
                 red_message = self.red_agent.send_message()
             else:
-                red_message = self.red_agent_minimax(self.green_team, self.red_agent, 2, True, self.blue_agent)[0]
+                red_message = self.red_agent_minimax(self.green_team, self.red_agent, 2, True, self.blue_agent, -math.inf, math.inf)[0]
                 print("RED AI SENT --> ", red_message)
 
             total_follower_loss = 0
@@ -232,7 +258,7 @@ class Game:
             if(blue_user):
                 blue_message = self.blue_agent.send_message()
             else:
-                blue_message = self.blue_agent_minimax(self.green_team, self.blue_agent, 2, True, self.red_agent, True)[0]
+                blue_message = self.blue_agent_minimax(self.green_team, self.blue_agent, 2, True, self.red_agent, True, -math.inf, math.inf)[0]
                 # print("after minimax BLUE ENERGY: ", self.blue_agent.energy_level)
                 print("BLUE AI SENT --> ", blue_message)
 
@@ -242,9 +268,9 @@ class Game:
                 grey_message = ""
 
                 if(grey_agent.team == "Red"):
-                    grey_message = self.red_agent_minimax(self.green_team, self.red_agent, 2, True, self.blue_agent)[0]
+                    grey_message = self.red_agent_minimax(self.green_team, self.red_agent, 2, True, self.blue_agent, -math.inf, math.inf)[0]
                 elif(grey_agent.team == "Blue"):
-                    grey_message = self.blue_agent_minimax(self.green_team, self.blue_agent, 2, True, self.red_agent, True)[0]
+                    grey_message = self.blue_agent_minimax(self.green_team, self.blue_agent, 2, True, self.red_agent, True, -math.inf, math.inf)[0]
 
                 print("The Grey Agent Sent ----->", grey_message)
                 uncertainty_change = 0.0
@@ -292,7 +318,7 @@ class Game:
             
 
             print("Showing current status of the population...")
-            self.visualisation(self.green_team, self.red_agent, self.blue_agent)
+            self.visualisation(self.green_team)
 
             print("Status of Green Agents")
             for green_agent in self.green_team:
@@ -304,12 +330,12 @@ class Game:
             print("----------------------------------")
             print("Total Population:", len(self.green_team))
             print("Total Voting Population: ", total_voting)
+            voting_pop = total_voting
             print("Total Red Followers:", self.red_agent.followers)
             #reset the count
             self.red_agent.followers = 0
             total_follower_loss = 0
             self.blue_agent.energy_level - total_energy_loss
-            print("Blue Energy Level: ", self.blue_agent.energy_level)
             print("----------------------------------")
             turn += 1
             print("================== NEXT ROUND ==================\n")
@@ -325,12 +351,20 @@ class Game:
             if(green_agent.vote_status):
                 vote_count += 1
 
+        winner = ""
         if(vote_count > len(self.green_team)/2):
             print("The Winner is Blue!!!")
+            winner = "Blue"
         elif(vote_count == len(self.green_team)/2):
             print("The Game is a Tie!!!")
+            winner = "Tie"
         elif(vote_count < len(self.green_team)/2):
             print("The Winner is Red!!!")
+            winner = "Red"
+
+        
+        with open("results.txt", "a") as f:
+            f.write("Winner : " + str(winner) + " |" + " Voting Population : " + str(voting_pop) + " |" + " Total Population : " + str(len(self.green_team)) + "\n")
         pass
 
 #---------------------------------EVERYTHING BELOW RELATE TO THE MAIN EXECUTION----------------------------
