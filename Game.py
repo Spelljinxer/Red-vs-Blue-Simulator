@@ -207,18 +207,30 @@ class Game:
             return message_to_send, value
     
     def visualisation(self, green_team):
+                plt.figure(3,figsize=(12,12))
                 diction = {}
+                dicktion = {}
                 color_map = []
+                g = nx.Graph()
+                g.add_node("RED")
+                g.add_node("BLUE")
+                color_map.append("Red")
+                color_map.append("Blue")
                 for green_agent in self.green_team:
                     diction.update({green_agent.unique_id : green_agent.connections})
+                    dicktion.update({green_agent.unique_id : green_agent.communicate})
                     if green_agent.vote_status == True:
                         color_map.append("Blue")
                     else:
                         color_map.append("Red")
-                g = nx.Graph()
+                print(color_map)
                 for key, value in diction.items():
                     for v in value:
                         g.add_edge(key, v)
+                for key, value in dicktion.items():
+                    g.add_edge(key, "BLUE")
+                    if value == True:
+                        g.add_edge(key, "RED")
                 nx.draw(g, node_color = color_map, with_labels = True)
                 plt.show()
 
