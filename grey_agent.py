@@ -18,7 +18,6 @@ class grey_agent:
         7: "Voting for red teams means voting for the end of our nation",
         8: "If you vote for us we will give free healthcare and increase wages!",
         9: "if you don't vote for us you are a loser RIP BOZO",
-        10: "summon grey agent",
     }
     
     red_messages = {
