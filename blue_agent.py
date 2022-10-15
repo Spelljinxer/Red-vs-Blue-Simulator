@@ -8,16 +8,16 @@ import random
 import prettytable as pt
 class blue_agent:
     messages = {
-        0: "blue message 1",
-        1: "blue message 2",
-        2: "blue message 3",
-        3: "blue message 4",
-        4: "blue message 5",
-        5: "blue message 6",
-        6: "blue message 7",
-        7: "blue message 8",
-        8: "blue message 9",
-        9: "blue message 10",
+        0: "Vote for blue team!",
+        1: "Please vote for us!",
+        2: "If you vote for us you are a good citizen!",
+        3: "Vote for us, we are the best",
+        4: "Show your support for our nations future by voting for us!",
+        5: "Red team are full of criminals, vote for us!",
+        6: "Red team will take away our freedom!",
+        7: "Voting for red teams means voting for the end of our nation",
+        8: "If you vote for us we will give free healthcare and increase wages!",
+        9: "if you don't vote for us you are a loser RIP BOZO",
         10: "summon grey agent",
     }
     followers = None

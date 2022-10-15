@@ -8,29 +8,30 @@ Grey Agent
 import random
 class grey_agent:
     blue_messages = {
-        0: "blue message 1",
-        1: "blue message 2",
-        2: "blue message 3",
-        3: "blue message 4",
-        4: "blue message 5",
-        5: "blue message 6",
-        6: "blue message 7",
-        7: "blue message 8",
-        8: "blue message 9",
-        9: "blue message 10",
+        0: "Vote for blue team!",
+        1: "Please vote for us!",
+        2: "If you vote for us you are a good citizen!",
+        3: "Vote for us, we are the best",
+        4: "Show your support for our nations future by voting for us!",
+        5: "Red team are full of criminals, vote for us!",
+        6: "Red team will take away our freedom!",
+        7: "Voting for red teams means voting for the end of our nation",
+        8: "If you vote for us we will give free healthcare and increase wages!",
+        9: "if you don't vote for us you are a loser RIP BOZO",
+        10: "summon grey agent",
     }
     
     red_messages = {
-        0: "red message 1",
-        1: "red message 2",
-        2: "red message 3",
-        3: "red message 4",
-        4: "red message 5",
-        5: "red message 6",
-        6: "red message 7",
-        7: "red message 8",
-        8: "red message 9",
-        9: "red message 10",
+        0: "Vote for red team!",
+        1: "Please vote for us",
+        2: "If you dont vote for us you are a bad person",
+        3: "Blue team a democratic left wing upper right alt full circle libtard",
+        4: "If blue team wins the future will be dark",
+        5: "Blue team is going to lead us to the ground",
+        6: "Why vote for blue team? they will destroy our future",
+        7: "Blue voters will be punished severely and publicly and will be beaten",
+        8: "if do not vote for us we will find you and burn your house down",
+        9: "Blue voters and their families will be publically tortured and killed",
     }
     
     def __init__(self, team, unique_id):
