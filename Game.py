@@ -6,6 +6,7 @@ Game Class to Execute the Game
 
 saving this here: python Game.py -ge 100 -gp 5 -gr 10 -u 0.0,1.0 -p 50
 """
+from cProfile import label
 import red_agent
 import blue_agent
 import green_agent
@@ -207,32 +208,40 @@ class Game:
             return message_to_send, value
     
     def visualisation(self, green_team):
-                plt.figure(3,figsize=(12,12))
-                diction = {}
-                dicktion = {}
-                color_map = []
-                g = nx.Graph()
-                g.add_node("RED")
-                g.add_node("BLUE")
-                color_map.append("Red")
+        plt.figure(1,figsize=(12,12))
+        green_connections = {}
+        red_connections = {}
+        color_map = []
+        g = nx.Graph()
+        
+        #Adding Red Agent and Blue Agent
+        g.add_node("RED")
+        g.add_node("BLUE")
+        color_map.append("Red")
+        color_map.append("Blue")
+        
+        for green_agent in self.green_team:
+            green_connections.update({green_agent.unique_id : green_agent.connections})
+            red_connections.update({green_agent.unique_id : green_agent.communicate})
+            #Paint nodes blue is they ARE voting, red if they ARE NOT voting
+            if green_agent.vote_status == True:
                 color_map.append("Blue")
-                for green_agent in self.green_team:
-                    diction.update({green_agent.unique_id : green_agent.connections})
-                    dicktion.update({green_agent.unique_id : green_agent.communicate})
-                    if green_agent.vote_status == True:
-                        color_map.append("Blue")
-                    else:
-                        color_map.append("Red")
-                print(color_map)
-                for key, value in diction.items():
-                    for v in value:
-                        g.add_edge(key, v)
-                for key, value in dicktion.items():
-                    g.add_edge(key, "BLUE")
-                    if value == True:
-                        g.add_edge(key, "RED")
-                nx.draw(g, node_color = color_map, with_labels = True)
-                plt.show()
+            else:
+                color_map.append("Red")
+        #Add edge between each green nodes neighbour
+        for key, value in green_connections.items():
+            for v in value:
+                g.add_edge(key, v)
+        #Add edge between red node and its neighbours and blue node and its neighbours
+        for key, value in red_connections.items():
+            g.add_edge(key, "BLUE")
+            if value == True:
+                g.add_edge(key, "RED")
+                
+        #draw the graph
+        nx.draw(g, node_color = color_map, with_labels=True)
+        #display graph
+        plt.show()
 
     def execute(self):
         #Every round...
