@@ -305,7 +305,7 @@ class Game:
                                 self.green_interaction(green_agent, self.green_team[neighbor])
             
             self.visualisation(self.green_team)
-            print("Showing current status of the population...")n
+            print("Showing current status of the population...")
 
             print("Status of Green Agents")
             for green_agent in self.green_team:
