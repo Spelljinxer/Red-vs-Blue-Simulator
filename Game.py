@@ -23,6 +23,7 @@ import copy
 import math
 import time
 
+
 class Game:
     blue_energy_level = None
     red_agent = red_agent.red_agent(False, 0, 0)
@@ -193,7 +194,9 @@ class Game:
                 if alpha >= beta:
                     break
             return message_to_send, value
+    
     def visualisation(self, green_team):
+        #generates a graph showing the network status between green, blue and red agent(s)
         plt.figure(1,figsize=(12,12))
         green_connections = {}
         red_connections = {}
@@ -229,12 +232,13 @@ class Game:
         plt.show()
 
     def uncertainties_graph(self, green_team):
+        #generates a histogram representing green agent uncertainty 
         matplotlib.use('TkAgg')
-        fig, ax = plt.subplots()
+        ax = plt.subplots()
         uncertainties = []
         for green_agent in green_team:
             uncertainties.append(green_agent.uncertainty)
-        ax.hist(uncertainties, bins = 190, color = 'red', edgecolor = 'blue')
+        ax.hist(uncertainties, bins = 250, color = 'red', edgecolor = 'blue')
         ax.set_title('Green Agent Uncertainty Distribution Graph', size = 15)
         ax.set_xlabel('Uncertainty Level', size = 18)
         ax.set_ylabel('Number of Nodes', size = 18)

@@ -34,6 +34,7 @@ class red_agent:
         self.uncertainty_upper_limit = upper_limit
         
     def get_message_potency_follower_loss(self, message):
+        #uses the message chosen to return a potency, follower loss and uncertainty change
         potency = 0
         follower_loss = 0
         uncertainty_change = 0

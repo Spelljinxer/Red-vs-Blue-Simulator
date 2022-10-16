@@ -32,6 +32,7 @@ class blue_agent:
         self.uncertainty_upper_limit = upper_limit
     
     def get_message_certainty_energy_loss(self, message):
+        #uses message chosen to return the certainty, energy loss and uncertainty change
         certainty = 0.0
         energy_loss = 0.0
         uncertainty_change = 0.0
