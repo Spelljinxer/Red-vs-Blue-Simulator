@@ -4,9 +4,9 @@ Game Class to Execute the Game
     Reiden Rufin | 22986337
     Nathan Eden  | 22960674
 
-saving this here: python Game.py -ge 100 -gp 5 -gr 10 -u 0.0,1.0 -p 50
+saving this here: python Game.py -ge 200 -gp 5 -gr 10 -u 0.0,1.0 -p 50
 """
-from cProfile import label
+
 import red_agent
 import blue_agent
 import green_agent
@@ -16,10 +16,12 @@ import grey_agent
 # import igraph as ig
 import networkx as nx
 import matplotlib.pyplot as plt
+import matplotlib
 import random
 import sys
 import copy
 import math
+import time
 
 class Game:
     blue_energy_level = None
@@ -97,7 +99,6 @@ class Game:
         elif green_agent_uncertainty < self.lower_limit:
             green_agent_uncertainty = self.lower_limit
 
-    #returns the best message that the red agent should send to the green team
     def red_agent_minimax(self, green_team, red_agent, depth, maximizing_player, blue_agent, alpha, beta):
         red_agent_messages = []
         for messages in red_agent.messages:
@@ -227,6 +228,18 @@ class Game:
         #display graph
         plt.show()
 
+    def uncertainties_graph(self, green_team):
+        matplotlib.use('TkAgg')
+        fig, ax = plt.subplots()
+        uncertainties = []
+        for green_agent in green_team:
+            uncertainties.append(green_agent.uncertainty)
+        ax.hist(uncertainties, bins = 190, color = 'red', edgecolor = 'blue')
+        ax.set_title('Green Agent Uncertainty Distribution Graph', size = 15)
+        ax.set_xlabel('Uncertainty Level', size = 18)
+        ax.set_ylabel('Number of Nodes', size = 18)
+        plt.show()
+    
     def execute(self):
         print("+-------------------------------------+")
         #Every round...
@@ -258,7 +271,7 @@ class Game:
             if(blue_user):
                 blue_message = self.blue_agent.send_message()
             else:
-                blue_message = self.blue_agent_minimax(self.green_team, self.blue_agent, 2, True, self.red_agent, True, -math.inf, math.inf)[0]
+                blue_message = self.blue_agent_minimax(self.green_team, self.blue_agent, 3, True, self.red_agent, True, -math.inf, math.inf)[0]
                 # print("after minimax BLUE ENERGY: ", self.blue_agent.energy_level)
                 print("BLUE AI SENT --> ", blue_message)
 
@@ -268,9 +281,9 @@ class Game:
                 grey_message = ""
 
                 if(grey_agent.team == "Red"):
-                    grey_message = self.red_agent_minimax(self.green_team, self.red_agent, 2, True, self.blue_agent, -math.inf, math.inf)[0]
+                    grey_message = self.red_agent_minimax(self.green_team, self.red_agent, 3, True, self.blue_agent, -math.inf, math.inf)[0]
                 elif(grey_agent.team == "Blue"):
-                    grey_message = self.blue_agent_minimax(self.green_team, self.blue_agent, 2, True, self.red_agent, True, -math.inf, math.inf)[0]
+                    grey_message = self.blue_agent_minimax(self.green_team, self.blue_agent, 3, True, self.red_agent, True, -math.inf, math.inf)[0]
 
                 print("The Grey Agent Sent ----->", grey_message)
                 uncertainty_change = 0.0
@@ -316,9 +329,9 @@ class Game:
                                 green_nodes_visited.append((green_agent.unique_id, neighbor))
                                 self.green_interaction(green_agent, self.green_team[neighbor])
             
-            self.visualisation(self.green_team)
             print("Showing current status of the population...")
-            self.visualisation(self.green_team)
+            # self.visualisation(self.green_team)
+            self.uncertainties_graph(self.green_team)
 
             print("Status of Green Agents")
             for green_agent in self.green_team:
@@ -386,7 +399,7 @@ Execute.
 if __name__ == "__main__":
     import prettytable as pt
 
-
+    start_time = time.time()
     n = len(sys.argv)
     #change this check if we're adding more
     if(n != 11):
@@ -415,26 +428,27 @@ if __name__ == "__main__":
     [t.add_row([sentence[i:i + width]]) for i in range(0, len(sentence), width)]
 
     print(t)
-    confirm = input("Confirm Your Selection? (y/n): ")
-    if(confirm != "y"):
-        print("Exiting...")
-        sys.exit(1)
+    # confirm = input("Confirm Your Selection? (y/n): ")
+    # if(confirm != "y"):
+    #     print("Exiting...")
+    #     sys.exit(1)
 
     red_user = False
     blue_user = False
-    playing = input("Do you wish to play? (y/n): ")
-    if playing == "y":
-        choice = input("Do you wish to play as red or blue? (r/b): ")
-        if choice == "r":
-            red_user = True
-        elif choice == "b":
-            blue_user = True
-        else:
-            print("Invalid choice, exiting...")
-            sys.exit(1)
-    else:
-        print("You have chosen not to play. The AI's will instead play.")
+    # playing = input("Do you wish to play? (y/n): ")
+    # if playing == "y":
+    #     choice = input("Do you wish to play as red or blue? (r/b): ")
+    #     if choice == "r":
+    #         red_user = True
+    #     elif choice == "b":
+    #         blue_user = True
+    #     else:
+    #         print("Invalid choice, exiting...")
+    #         sys.exit(1)
+    # else:
+    #     print("You have chosen not to play. The AI's will instead play.")
 
     Game = Game(uncertainty_range, total_Green, grey_agent_percentage, probability_of_connections, initial_voting, red_user, blue_user)
     Game.execute()
+    print ("took", time.time() - start_time, "to run")
 

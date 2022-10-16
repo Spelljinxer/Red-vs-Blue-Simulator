@@ -75,7 +75,7 @@ class grey_agent:
         return certainty, uncertainty_change                                                     
     
     def will_vote_status_change(self, certainty):
-        return random.randint(0, 100) <= certainty * 100
+        return random.randint(0, 200) <= certainty * 100
 
     def blue_move(self, green_agent, message):
         certainty, uncertainty_change = self.get_message_certainty_energy_loss(message)
@@ -90,29 +90,32 @@ class grey_agent:
         uncertainty_change = 0.0
         if message == self.red_messages[0] or message == self.red_messages[1]:
             potency = 0.2
-            uncertainty_change = 0.04
+            uncertainty_change = 0.03125
         elif message == self.red_messages[2] or message == self.red_messages[3]:
             potency = 0.4
-            uncertainty_change = 0.08
+            uncertainty_change = 0.0625
         elif message == self.red_messages[4] or message == self.red_messages[5]:
             potency = 0.6
-            uncertainty_change = 0.12
+            uncertainty_change = 0.124
         elif message == self.red_messages[6] or message == self.red_messages[7]:
             potency = 0.8
-            uncertainty_change = 0.16
+            uncertainty_change = 0.25
         elif message == self.red_messages[8] or message == self.red_messages[9]:
             potency = 1.0
-            uncertainty_change = 0.2
+            uncertainty_change = 0.5
         return [potency, uncertainty_change]
+
+    def will_vote_status_change_red(self, potency):
+        return random.randint(0, 100) <= potency * 100
 
     def red_move(self, green_agent, message):
         uncertainty_change = 0.0
-        if(green_agent.communicate):
-            potency, uncertainty_change = self.get_message_potency_follower_loss(message)
-            if (green_agent.vote_status):
-                uncertainty_change *= -1
-            if(self.will_vote_status_change(potency)):
-                green_agent.vote_status = False
+        # if(green_agent.communicate):
+        potency, uncertainty_change = self.get_message_potency_follower_loss(message)
+        if (green_agent.vote_status):
+            uncertainty_change *= -1
+        if(self.will_vote_status_change_red(potency)):
+            green_agent.vote_status = False
         
         return uncertainty_change
 
