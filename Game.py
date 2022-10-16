@@ -234,7 +234,7 @@ class Game:
     def uncertainties_graph(self, green_team):
         #generates a histogram representing green agent uncertainty 
         matplotlib.use('TkAgg')
-        ax = plt.subplots()
+        fig, ax = plt.subplots()
         uncertainties = []
         for green_agent in green_team:
             uncertainties.append(green_agent.uncertainty)
