@@ -7,6 +7,8 @@ Game Class to Execute the Game
 saving this here: python Game.py -ge 100 -gp 5 -gr 10 -u 0.0,1.0 -p 50
 """
 from cProfile import label
+
+import matplotlib
 import red_agent
 import blue_agent
 import green_agent
@@ -226,6 +228,18 @@ class Game:
         nx.draw(g, node_color = color_map, with_labels=True)
         #display graph
         plt.show()
+    
+    def uncertainties_graph(self, green_team):
+        matplotlib.use('TkAgg')
+        fig, ax = plt.subplots()
+        uncertainties = []
+        for green_agent in green_team:
+            uncertainties.append(green_agent.uncertainty)
+        ax.hist(uncertainties, bins = 190, color = 'red', edgecolor = 'blue')
+        ax.set_title('Green Agent Uncertainty Distribution Graph', size = 15)
+        ax.set_xlabel('Uncertainty Level', size = 18)
+        ax.set_ylabel('Number of Nodes', size = 18)
+        plt.show()
 
     def execute(self):
         print("+-------------------------------------+")
@@ -315,10 +329,10 @@ class Game:
                             if((green_agent.unique_id, neighbor) not in green_nodes_visited):
                                 green_nodes_visited.append((green_agent.unique_id, neighbor))
                                 self.green_interaction(green_agent, self.green_team[neighbor])
-            
-            self.visualisation(self.green_team)
+       
             print("Showing current status of the population...")
             self.visualisation(self.green_team)
+            self.uncertainties_graph(self.green_team)
 
             print("Status of Green Agents")
             for green_agent in self.green_team:
