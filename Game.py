@@ -238,7 +238,7 @@ class Game:
         uncertainties = []
         for green_agent in green_team:
             uncertainties.append(green_agent.uncertainty)
-        ax.hist(uncertainties, bins = 250, color = 'red', edgecolor = 'blue')
+        ax.hist(uncertainties, bins = 50, color = 'red', edgecolor = 'blue')
         ax.set_title('Green Agent Uncertainty Distribution Graph', size = 15)
         ax.set_xlabel('Uncertainty Level', size = 18)
         ax.set_ylabel('Number of Nodes', size = 18)
