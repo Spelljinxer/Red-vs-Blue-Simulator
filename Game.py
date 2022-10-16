@@ -191,6 +191,8 @@ class Game:
                 if alpha >= beta:
                     break
             return message_to_send, value
+    
+    #creates the network graph to display
     def visualisation(self, green_team):
         plt.figure(1,figsize=(12,12))
         green_connections = {}
@@ -212,20 +214,17 @@ class Game:
                 color_map.append("Blue")
             else:
                 color_map.append("Red")
-        #Add edge between each green nodes neighbour
         for key, value in green_connections.items():
             for v in value:
                 g.add_edge(key, v)
-        #Add edge between red node and its neighbours and blue node and its neighbours
         for key, value in red_connections.items():
             g.add_edge(key, "BLUE")
             if value == True:
                 g.add_edge(key, "RED")
-        #draw the graph
         nx.draw(g, node_color = color_map, with_labels=True)
-        #display graph
         plt.show()
 
+    #creates the histogram plot for uncertainty distribution
     def uncertainties_graph(self, uncertainties):
         matplotlib.use('TkAgg')
         fig, ax = plt.subplots()
@@ -248,21 +247,22 @@ class Game:
             print("Starting Blue Energy: ", self.blue_agent.energy_level)
             
             total_voting = 0
-
+            
             red_message = ""
             if(red_user):
                 red_message = self.red_agent.send_message()
             else:
                 red_message = self.red_agent_minimax(self.green_team, self.red_agent, 2, True, self.blue_agent, -math.inf, math.inf)[0]
                 print("RED AI SENT --> ", red_message)
-
             total_follower_loss = 0
-
+            #RED INTERACTION (RED TURN)
             for green_agent in self.green_team:
                 red_uncertainty_change, follower_loss = self.red_agent.red_move(green_agent, red_message)
                 total_follower_loss += follower_loss
                 self.change_green_uncertainty(green_agent.uncertainty, red_uncertainty_change)
-            # print("before minimax BLUE ENERGY: ", self.blue_agent.energy_level)
+            
+
+            #BLUE INTERACTION (BLUE TURN)
             total_energy_loss = 0
             blue_message = ""
             if(blue_user):
@@ -272,6 +272,7 @@ class Game:
                 # print("after minimax BLUE ENERGY: ", self.blue_agent.energy_level)
                 print("BLUE AI SENT --> ", blue_message)
 
+            #handle if the message is to summon a grey agent
             if(blue_message == "summon grey agent"):
                 grey_agent = random.choice(self.grey_team)
                 print("Grey Agent: ", grey_agent.unique_id, "has been summoned!", "Team: ", grey_agent.team)
