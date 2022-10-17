@@ -1,8 +1,9 @@
 """
 Game Class to Execute the Game
-@Authors | @StudentId
-    Reiden Rufin | 22986337
-    Nathan Eden  | 22960674
+@Authors | @Student ID
++-------------------+
+Reiden Rufin | 22986337
+Nathan Eden | 22960674
 
 Example Usage: python Game.py -ge 100 -gp 5 -gr 10 -u 0.0,1.0 -p 50
 """
@@ -52,6 +53,7 @@ class Game:
             else:
                 self.grey_team.append(grey_agent.grey_agent("Blue", agent_id))
 
+        #the total amount of green agents should be the total amount of green agents minus the amount of grey agents as %
         new_green_total = green_total - (green_total * gp_as_percent)
         voting_pop = int(new_green_total * (initial_voting/100))
         for agent_id in range(int(new_green_total)):
@@ -63,7 +65,7 @@ class Game:
                 break
             self.green_team.append(green_agent.green_agent(connections, agent_id, vote_status, uncertainty))
 
-        #generate an undirected graph with n nodes with p probability of an edge between any two nodes
+        #generate an undirected graph with n nodes with p probability (Edge_probability) of an edge between any two nodes
         for agent in self.green_team:
             for agent2 in self.green_team:
                 if agent2.unique_id > agent.unique_id:
@@ -90,7 +92,10 @@ class Game:
             neighbor_node.uncertainty -= new_uncertainty
             neighbor_node.uncertainty = round(neighbor_node.uncertainty, 2)
             pass
-
+    
+    #How we change the green agent's uncertainty
+    # if it reaches below the lower limit then it simply becomes the lower limit
+    # vice versa.
     def change_green_uncertainty(self, green_agent_uncertainty, uncertainty_change):
         green_agent_uncertainty += uncertainty_change
         if green_agent_uncertainty > self.upper_limit:
@@ -98,6 +103,7 @@ class Game:
         elif green_agent_uncertainty < self.lower_limit:
             green_agent_uncertainty = self.lower_limit
 
+    #minimax with alpha beta pruning for red agent
     def red_agent_minimax(self, green_team, red_agent, depth, maximizing_player, blue_agent, alpha, beta):
         red_agent_messages = []
         for messages in red_agent.messages:
@@ -114,6 +120,7 @@ class Game:
             message_to_send = random.choice(blue_agent_messages)
             for message in red_agent_messages:
                 green_team_copy = copy.deepcopy(green_team)
+                #creates the hypothetical move using a copy of the current game state
                 for green_agent in green_team_copy:
                     red_uncertainty_change, follower_loss = red_agent.red_move(green_agent, message)
                     self.change_green_uncertainty(green_agent.uncertainty, red_uncertainty_change)
@@ -143,12 +150,16 @@ class Game:
 
             return message_to_send, value
 
+    #minimax with alpha beta pruning for blue agent
     def blue_agent_minimax(self, green_team, blue_agent, depth, maximizing_player, red_agent, grey_agent, alpha, beta):
         red_agent_messages = []
         for messages in red_agent.messages:
             red_agent_messages.append(red_agent.messages[messages])
         blue_agent_messages = []
         no_send_grey_agent = False
+
+        #As the grey agent cannot summon another grey agent, 
+        # we do not add the "summon grey agent" option for this section
         if(grey_agent):
             no_send_grey_agent = True
             for messages in range(len(blue_agent.messages)-1):
@@ -308,7 +319,8 @@ class Game:
 
             print("energy loss this round: ", total_energy_loss)
 
-            #cutoff communication after follower loss
+            #cutoff communication based on the number of follower loss,
+            #that is set communicate to False.
             index = 0
             while(index < round(total_follower_loss)):
                 green_agent = random.choice(self.green_team)
@@ -316,11 +328,13 @@ class Game:
                     green_agent.communicate = False
                     self.red_agent.followers -= 1
                     index += 1
+            
             #green interaction with each other per round
             green_nodes_visited = []    
             for green_agent in self.green_team:
                 if(green_agent.connections):
                     for neighbor in green_agent.connections:
+                        #we only want to visit edges once
                         if(neighbor > green_agent.unique_id):
                             continue
                         else:
@@ -328,6 +342,7 @@ class Game:
                                 green_nodes_visited.append((green_agent.unique_id, neighbor))
                                 self.green_interaction(green_agent, self.green_team[neighbor])
             
+            #Displays the network graph followed by the uncertainty distribution graph
             print("Showing current status of the population...")
             self.visualisation(self.green_team)
             for green_agent in self.green_team:
@@ -449,5 +464,7 @@ if __name__ == "__main__":
 
     Game = Game(uncertainty_range, total_Green, grey_agent_percentage, probability_of_connections, initial_voting, red_user, blue_user)
     Game.execute()
-    print ("took", time.time() - start_time, "to run")
+
+    #Was only used explicitly for testing runtime
+    #print ("took", time.time() - start_time, "to run")
 

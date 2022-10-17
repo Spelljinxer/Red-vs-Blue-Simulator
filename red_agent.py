@@ -1,8 +1,9 @@
 """
 Red Agent
-@Authors | @StudentId
-    Reiden Rufin | 22986337
-    Nathan Eden  | 22960674      
+@Authors | @Student ID
++-------------------+
+Reiden Rufin | 22986337
+Nathan Eden | 22960674    
 """
 
 import random
@@ -80,7 +81,6 @@ class red_agent:
             message_output = []
             for messages in self.messages:
                 message_output.append(self.messages[messages])
-            #display the message using prettytable
             table = pt.PrettyTable()
             table.field_names = ["Message Number", '\x1b[1;33;45m' + "Message" + '\x1b[0m']
             for i in range(len(message_output)):
@@ -94,7 +94,6 @@ class red_agent:
                 self.send_message()
                 
         else:
-            #this is what the AI's best move will be later
             message_to_send = random.choice(list(self.messages.values()))
         
         print("Red Sending message: ", message_to_send)
@@ -104,11 +103,9 @@ class red_agent:
         score = 0
         for green_agent in green_team:
             if(green_agent.communicate):
+                score += 0.25
                 if(green_agent.vote_status == False):
-                    if(green_agent.uncertainty < 0.5):
-                        score += 0.5
-                    else:
-                        score -= 0.25
+                    score += 0.5
                 else:
                     score -= 0.5
         return score

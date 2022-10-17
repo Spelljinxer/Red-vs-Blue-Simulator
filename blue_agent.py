@@ -1,8 +1,9 @@
 """
 Blue Agent
-@Authors | @StudentId
-    Reiden Rufin | 22986337
-    Nathan Eden  | 22960674      
+@Authors | @Student ID
++-------------------+
+Reiden Rufin | 22986337
+Nathan Eden | 22960674    
 """
 import random
 import prettytable as pt
@@ -31,6 +32,9 @@ class blue_agent:
         self.uncertainty_lower_limit = lower_limit
         self.uncertainty_upper_limit = upper_limit
     
+    #the certainty scales from 0.1 - > 1.0
+    #the energy loss scales from 0.05 -> 0.5
+    #the uncertainty change scales from 0.02 -> 0.2
     def get_message_certainty_energy_loss(self, message):
         certainty = 0.0
         energy_loss = 0.0
@@ -79,6 +83,7 @@ class blue_agent:
             uncertainty_change = 0.2
         return [certainty, energy_loss, uncertainty_change]                                                        
     
+    #See Assmption 6 as to why it is harder for blue to generate the change
     def will_vote_status_change(self, certainty):
         return random.randint(0, 200) <= certainty * 100
 
@@ -103,7 +108,6 @@ class blue_agent:
             message = ""
             if(self.grey_agent_num > 0):
                 message_output.append(self.messages[10])
-                #display the list of messages using prettytable
                 table = pt.PrettyTable()
                 table.field_names = ["Message Number", '\x1b[0;36;44m' + "Message" + '\x1b[0m']
                 for i in range(len(message_output)):
@@ -111,7 +115,6 @@ class blue_agent:
                 print(table)
                 message = input("Please enter a message(0 - 10): ")
             else:
-                #display the list of messages using prettytable
                 table = pt.PrettyTable()
                 table.field_names = ["Message Number", '\x1b[0;36;44m' + "Message" + '\x1b[0m']
                 for i in range(len(message_output)):
@@ -131,27 +134,22 @@ class blue_agent:
                 self.send_message()
         
         else:
-            #replace with AI move later
             for i in range(10):
                 message_output.append(self.messages[i])
             if(self.grey_agent_num > 0):
                 message_output.append(self.messages[10])        
             message_to_send = random.choice(message_output)
 
-        
         print("Blue Sending message: ", message_to_send)
         return message_to_send
 
-    
+    #Our evaluation for minimax just checks,
+    #for each agent, if their opinion is voting, then add score, else subtract score
     def evaluate(self, green_team):
         score = 0
         for green_agent in green_team:
-            if(green_agent.communicate):
-                if(green_agent.vote_status):
-                    if(green_agent.uncertainty < 0.5):
-                        score += 0.5
-                    else:
-                        score -= 0.25
-                else:
-                    score -= 0.5
+            if(green_agent.vote_status):
+                score += 0.5
+            else:
+                score -= 0.5
         return score
