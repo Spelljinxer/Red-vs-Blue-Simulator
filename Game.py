@@ -15,6 +15,7 @@ import grey_agent
 import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib
+import prettytable as pt
 import random
 import sys
 import copy
@@ -397,8 +398,6 @@ def print_usage():
 Execute.
 '''
 if __name__ == "__main__":
-    import prettytable as pt
-
     start_time = time.time()
     n = len(sys.argv)
     #change this check if we're adding more
