@@ -1,10 +1,11 @@
 """
 Game Class to Execute the Game
-@Authors | @StudentId
-    Reiden Rufin | 22986337
-    Nathan Eden  | 22960674
+@Authors | @Student ID
++-------------------+
+Reiden Rufin | 22986337
+Nathan Eden | 22960674
 
-saving this here: python Game.py -ge 200 -gp 5 -gr 10 -u 0.0,1.0 -p 50
+Example Usage: python Game.py -ge 100 -gp 5 -gr 10 -u 0.0,1.0 -p 50
 """
 
 import red_agent
@@ -12,11 +13,10 @@ import blue_agent
 import green_agent
 import grey_agent
 
-# import csv
-# import igraph as ig
 import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib
+import prettytable as pt
 import random
 import sys
 import copy
@@ -54,6 +54,7 @@ class Game:
             else:
                 self.grey_team.append(grey_agent.grey_agent("Blue", agent_id))
 
+        #the total amount of green agents should be the total amount of green agents minus the amount of grey agents as %
         new_green_total = green_total - (green_total * gp_as_percent)
         voting_pop = int(new_green_total * (initial_voting/100))
         for agent_id in range(int(new_green_total)):
@@ -65,7 +66,7 @@ class Game:
                 break
             self.green_team.append(green_agent.green_agent(connections, agent_id, vote_status, uncertainty))
 
-        #generate an undirected graph with n nodes with p probability of an edge between any two nodes
+        #generate an undirected graph with n nodes with p probability (Edge_probability) of an edge between any two nodes
         for agent in self.green_team:
             for agent2 in self.green_team:
                 if agent2.unique_id > agent.unique_id:
@@ -92,7 +93,10 @@ class Game:
             neighbor_node.uncertainty -= new_uncertainty
             neighbor_node.uncertainty = round(neighbor_node.uncertainty, 2)
             pass
-
+    
+    #How we change the green agent's uncertainty
+    # if it reaches below the lower limit then it simply becomes the lower limit
+    # vice versa.
     def change_green_uncertainty(self, green_agent_uncertainty, uncertainty_change):
         green_agent_uncertainty += uncertainty_change
         if green_agent_uncertainty > self.upper_limit:
@@ -100,6 +104,7 @@ class Game:
         elif green_agent_uncertainty < self.lower_limit:
             green_agent_uncertainty = self.lower_limit
 
+    #minimax with alpha beta pruning for red agent
     def red_agent_minimax(self, green_team, red_agent, depth, maximizing_player, blue_agent, alpha, beta):
         red_agent_messages = []
         for messages in red_agent.messages:
@@ -116,6 +121,7 @@ class Game:
             message_to_send = random.choice(blue_agent_messages)
             for message in red_agent_messages:
                 green_team_copy = copy.deepcopy(green_team)
+                #creates the hypothetical move using a copy of the current game state
                 for green_agent in green_team_copy:
                     red_uncertainty_change, follower_loss = red_agent.red_move(green_agent, message)
                     self.change_green_uncertainty(green_agent.uncertainty, red_uncertainty_change)
@@ -145,12 +151,16 @@ class Game:
 
             return message_to_send, value
 
+    #minimax with alpha beta pruning for blue agent
     def blue_agent_minimax(self, green_team, blue_agent, depth, maximizing_player, red_agent, grey_agent, alpha, beta):
         red_agent_messages = []
         for messages in red_agent.messages:
             red_agent_messages.append(red_agent.messages[messages])
         blue_agent_messages = []
         no_send_grey_agent = False
+
+        #As the grey agent cannot summon another grey agent, 
+        # we do not add the "summon grey agent" option for this section
         if(grey_agent):
             no_send_grey_agent = True
             for messages in range(len(blue_agent.messages)-1):
@@ -195,6 +205,8 @@ class Game:
                     break
             return message_to_send, value
     
+
+    #creates the network graph to display
     def visualisation(self, green_team):
         #generates a graph showing the network status between green, blue and red agent(s)
         plt.figure(1,figsize=(12,12))
@@ -217,59 +229,55 @@ class Game:
                 color_map.append("Blue")
             else:
                 color_map.append("Red")
-        #Add edge between each green nodes neighbour
         for key, value in green_connections.items():
             for v in value:
                 g.add_edge(key, v)
-        #Add edge between red node and its neighbours and blue node and its neighbours
         for key, value in red_connections.items():
             g.add_edge(key, "BLUE")
             if value == True:
                 g.add_edge(key, "RED")
-        #draw the graph
         nx.draw(g, node_color = color_map, with_labels=True)
-        #display graph
         plt.show()
 
-    def uncertainties_graph(self, green_team):
-        #generates a histogram representing green agent uncertainty 
+    #creates the histogram plot for uncertainty distribution
+    def uncertainties_graph(self, uncertainties):
         matplotlib.use('TkAgg')
         fig, ax = plt.subplots()
-        uncertainties = []
-        for green_agent in green_team:
-            uncertainties.append(green_agent.uncertainty)
         ax.hist(uncertainties, bins = 50, color = 'red', edgecolor = 'blue')
         ax.set_title('Green Agent Uncertainty Distribution Graph', size = 15)
         ax.set_xlabel('Uncertainty Level', size = 18)
         ax.set_ylabel('Number of Nodes', size = 18)
         plt.show()
+        return plt
     
     def execute(self):
         print("+-------------------------------------+")
         #Every round...
         turn = 0
         voting_pop = 0
+        uncertainties = []
         while self.blue_agent.energy_level > 0:
             if(self.blue_agent.energy_level <= 0):
                 break
             print("Starting Blue Energy: ", self.blue_agent.energy_level)
             
             total_voting = 0
-
+            
             red_message = ""
             if(red_user):
                 red_message = self.red_agent.send_message()
             else:
                 red_message = self.red_agent_minimax(self.green_team, self.red_agent, 2, True, self.blue_agent, -math.inf, math.inf)[0]
                 print("RED AI SENT --> ", red_message)
-
             total_follower_loss = 0
-
+            #RED INTERACTION (RED TURN)
             for green_agent in self.green_team:
                 red_uncertainty_change, follower_loss = self.red_agent.red_move(green_agent, red_message)
                 total_follower_loss += follower_loss
                 self.change_green_uncertainty(green_agent.uncertainty, red_uncertainty_change)
-            # print("before minimax BLUE ENERGY: ", self.blue_agent.energy_level)
+            
+
+            #BLUE INTERACTION (BLUE TURN)
             total_energy_loss = 0
             blue_message = ""
             if(blue_user):
@@ -279,13 +287,14 @@ class Game:
                 # print("after minimax BLUE ENERGY: ", self.blue_agent.energy_level)
                 print("BLUE AI SENT --> ", blue_message)
 
+            #handle if the message is to summon a grey agent
             if(blue_message == "summon grey agent"):
                 grey_agent = random.choice(self.grey_team)
                 print("Grey Agent: ", grey_agent.unique_id, "has been summoned!", "Team: ", grey_agent.team)
                 grey_message = ""
 
                 if(grey_agent.team == "Red"):
-                    grey_message = self.red_agent_minimax(self.green_team, self.red_agent, 3, True, self.blue_agent, -math.inf, math.inf)[0]
+                    grey_message = self.red_agent_minimax(self.green_team, self.red_agent, 2, True, self.blue_agent, -math.inf, math.inf)[0]
                 elif(grey_agent.team == "Blue"):
                     grey_message = self.blue_agent_minimax(self.green_team, self.blue_agent, 3, True, self.red_agent, True, -math.inf, math.inf)[0]
 
@@ -313,7 +322,8 @@ class Game:
 
             print("energy loss this round: ", total_energy_loss)
 
-            #cutoff communication after follower loss
+            #cutoff communication based on the number of follower loss,
+            #that is set communicate to False.
             index = 0
             while(index < round(total_follower_loss)):
                 green_agent = random.choice(self.green_team)
@@ -321,11 +331,13 @@ class Game:
                     green_agent.communicate = False
                     self.red_agent.followers -= 1
                     index += 1
+            
             #green interaction with each other per round
             green_nodes_visited = []    
             for green_agent in self.green_team:
                 if(green_agent.connections):
                     for neighbor in green_agent.connections:
+                        #we only want to visit edges once
                         if(neighbor > green_agent.unique_id):
                             continue
                         else:
@@ -333,9 +345,12 @@ class Game:
                                 green_nodes_visited.append((green_agent.unique_id, neighbor))
                                 self.green_interaction(green_agent, self.green_team[neighbor])
             
+            #Displays the network graph followed by the uncertainty distribution graph
             print("Showing current status of the population...")
-            # self.visualisation(self.green_team)
-            self.uncertainties_graph(self.green_team)
+            self.visualisation(self.green_team)
+            for green_agent in self.green_team:
+                uncertainties.append(green_agent.uncertainty)
+            lista  = self.uncertainties_graph(uncertainties)
 
             print("Status of Green Agents")
             for green_agent in self.green_team:
@@ -401,8 +416,6 @@ def print_usage():
 Execute.
 '''
 if __name__ == "__main__":
-    import prettytable as pt
-
     start_time = time.time()
     n = len(sys.argv)
     #change this check if we're adding more
@@ -432,27 +445,29 @@ if __name__ == "__main__":
     [t.add_row([sentence[i:i + width]]) for i in range(0, len(sentence), width)]
 
     print(t)
-    # confirm = input("Confirm Your Selection? (y/n): ")
-    # if(confirm != "y"):
-    #     print("Exiting...")
-    #     sys.exit(1)
+    confirm = input("Confirm Your Selection? (y/n): ")
+    if(confirm != "y"):
+        print("Exiting...")
+        sys.exit(1)
 
     red_user = False
     blue_user = False
-    # playing = input("Do you wish to play? (y/n): ")
-    # if playing == "y":
-    #     choice = input("Do you wish to play as red or blue? (r/b): ")
-    #     if choice == "r":
-    #         red_user = True
-    #     elif choice == "b":
-    #         blue_user = True
-    #     else:
-    #         print("Invalid choice, exiting...")
-    #         sys.exit(1)
-    # else:
-    #     print("You have chosen not to play. The AI's will instead play.")
+    playing = input("Do you wish to play? (y/n): ")
+    if playing == "y":
+        choice = input("Do you wish to play as red or blue? (r/b): ")
+        if choice == "r":
+            red_user = True
+        elif choice == "b":
+            blue_user = True
+        else:
+            print("Invalid choice, exiting...")
+            sys.exit(1)
+    else:
+        print("You have chosen not to play. The AI's will instead play.")
 
     Game = Game(uncertainty_range, total_Green, grey_agent_percentage, probability_of_connections, initial_voting, red_user, blue_user)
     Game.execute()
-    print ("took", time.time() - start_time, "to run")
+
+    #Was only used explicitly for testing runtime
+    #print ("took", time.time() - start_time, "to run")
 

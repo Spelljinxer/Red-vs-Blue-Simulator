@@ -1,0 +1,4 @@
+networkx
+matplotlib.pyplot
+matplotlib
+prettytable

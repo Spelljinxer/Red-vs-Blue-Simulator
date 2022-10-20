@@ -1,8 +1,9 @@
 """
 Grey Agent
-@Authors | @StudentId
-    Reiden Rufin | 22986337
-    Nathan Eden  | 22960674      
+@Authors | @Student ID
++-------------------+
+Reiden Rufin | 22986337
+Nathan Eden | 22960674   
 """
 
 import random
@@ -74,6 +75,7 @@ class grey_agent:
             uncertainty_change = 0.2
         return certainty, uncertainty_change                                                     
     
+    #like the blue agent, it must also become harder
     def will_vote_status_change(self, certainty):
         return random.randint(0, 200) <= certainty * 100
 
@@ -110,7 +112,6 @@ class grey_agent:
 
     def red_move(self, green_agent, message):
         uncertainty_change = 0.0
-        # if(green_agent.communicate):
         potency, uncertainty_change = self.get_message_potency_follower_loss(message)
         if (green_agent.vote_status):
             uncertainty_change *= -1

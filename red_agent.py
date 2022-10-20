@@ -1,8 +1,9 @@
 """
 Red Agent
-@Authors | @StudentId
-    Reiden Rufin | 22986337
-    Nathan Eden  | 22960674      
+@Authors | @Student ID
++-------------------+
+Reiden Rufin | 22986337
+Nathan Eden | 22960674    
 """
 
 import random
@@ -40,23 +41,23 @@ class red_agent:
         uncertainty_change = 0
         if message == self.messages[0] or message == self.messages[1]:
             potency = 0.2
-            follower_loss = 0.06
+            follower_loss = 0.15625
             uncertainty_change = 0.03125
         elif message == self.messages[2] or message == self.messages[3]:
             potency = 0.4
-            follower_loss = 0.07
+            follower_loss = 0.03125
             uncertainty_change = 0.0625
         elif message == self.messages[4] or message == self.messages[5]:
             potency = 0.6
-            follower_loss = 0.08
+            follower_loss = 0.00625
             uncertainty_change = 0.125
         elif message == self.messages[6] or message == self.messages[7]:
             potency = 0.8
-            follower_loss = 0.09
+            follower_loss = 0.0125
             uncertainty_change = 0.25
         elif message == self.messages[8] or message == self.messages[9]:
             potency = 1.0
-            follower_loss = 0.1
+            follower_loss = 0.025
             uncertainty_change = 0.5
         return [potency, follower_loss, uncertainty_change]
 
@@ -81,7 +82,6 @@ class red_agent:
             message_output = []
             for messages in self.messages:
                 message_output.append(self.messages[messages])
-            #display the message using prettytable
             table = pt.PrettyTable()
             table.field_names = ["Message Number", '\x1b[1;33;45m' + "Message" + '\x1b[0m']
             for i in range(len(message_output)):
@@ -95,7 +95,6 @@ class red_agent:
                 self.send_message()
                 
         else:
-            #this is what the AI's best move will be later
             message_to_send = random.choice(list(self.messages.values()))
         
         print("Red Sending message: ", message_to_send)
@@ -105,11 +104,9 @@ class red_agent:
         score = 0
         for green_agent in green_team:
             if(green_agent.communicate):
+                score += 0.25
                 if(green_agent.vote_status == False):
-                    if(green_agent.uncertainty < 0.5):
-                        score += 0.5
-                    else:
-                        score -= 0.25
+                    score += 0.5
                 else:
                     score -= 0.5
         return score

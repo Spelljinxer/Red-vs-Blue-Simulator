@@ -1,3 +1,11 @@
+'''
+This Program is just used to analyse the number of wins/ties from results.txt
+@Authors | @Student ID
++-------------------+
+Reiden Rufin | 22986337
+Nathan Eden | 22960674
+'''
+
 with open("results.txt", "r") as f:
     blue = 0
     red = 0
