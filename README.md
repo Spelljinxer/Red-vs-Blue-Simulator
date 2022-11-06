@@ -1,5 +1,9 @@
 # Red vs Blue Political Simulator
 
+# Developers
+[Spelljinxer](https://github.com/Spelljinxer)<br>
+[NEDE249](https://github.com/NEDE249)
+
 # Synopsis
 
 ```scala
@@ -55,7 +59,7 @@ The goal of red team is not make and green agents vote
 The goal of blue team is to make green agents vote
 ```
 
-# Report
+# Other Links
 
 [Report](https://github.com/Spelljinxer/CITS3001-Project/blob/LEE-NAGYUNG/report_22986337_22960674.pdf)
 
