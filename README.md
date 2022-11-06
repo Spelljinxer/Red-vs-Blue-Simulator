@@ -61,5 +61,5 @@ The goal of blue team is to make green agents vote
 
 # Report
 
-[Report]()
+[Report](https://github.com/Spelljinxer/CITS3001-Project/blob/LEE-NAGYUNG/report_22986337_22960674.pdf)
 
