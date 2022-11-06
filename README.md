@@ -3,7 +3,7 @@
 # Synopsis
 
 ```scala
-The game itself is set in a fictitious country where two teams are seeking geopolitical
+"The game itself is set in a fictitious country where two teams are seeking geopolitical
 influence over its population. The population of the country - the green team will either
 be voting or not voting, this will later represent the winner of the game. Two major teams
 - Red and Blue team, are trying to outclass and outsmart each other by sending
@@ -18,7 +18,7 @@ trying to make as many green members vote by the end of the game. During the gam
 each team will take turns distributing their messages across the green population (see
 further below). This process will repeat until the Blue team eventually expels all of its
 energy, in which the game will end. The winner will be based on the total number of the
-voting population contrasted against the total number of the green population.
+voting population contrasted against the total number of the green population."
 ```
 
 > Report Drafting
