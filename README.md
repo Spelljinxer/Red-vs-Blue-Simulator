@@ -55,7 +55,7 @@ Grey Team
 
 # The Game
 ```
-The goal of red team is not make and green agents vote
+The goal of red team is to make green agents NOT vote
 The goal of blue team is to make green agents vote
 ```
 
