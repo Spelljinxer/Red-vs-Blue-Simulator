@@ -20,10 +20,6 @@ further below). This process will repeat until the Blue team eventually expels a
 energy, in which the game will end. The winner will be based on the total number of the
 voting population contrasted against the total number of the green population."
 ```
-
-> Report Drafting
-> [https://docs.google.com/document/d/1XoNAPVyNEpUasD-rrc3I7k6QzF49HbfPvaAK0cTerEA/edit?usp=sharing](https://docs.google.com/document/d/1XoNAPVyNEpUasD-rrc3I7k6QzF49HbfPvaAK0cTerEA/edit?usp=sharing)
-
 # Agents
 ```
 Red Agent
